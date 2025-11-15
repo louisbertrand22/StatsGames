@@ -5,15 +5,29 @@ Game Statistics with NFC
 
 A React Native mobile application built with Expo for displaying game statistics from Supercell games and sharing profiles via NFC.
 
+### Features
+
+- ✅ User Authentication (Email/Password + Magic Link)
+- ✅ Protected Routes
+- ✅ User Profile Management
+- 🚧 Game Statistics Dashboard (Coming soon)
+- 🚧 NFC Profile Sharing (Coming soon)
+
 ### Quick Start
 
 ```bash
 cd app
 npm install
+
+# Copy environment template and configure with your Supabase credentials
+cp .env.example .env
+
+# Start the development server
 npm start
 ```
 
 For detailed setup instructions, see [app/README.md](app/README.md).
+For authentication setup, see [app/AUTH_README.md](app/AUTH_README.md).
 
 ### Project Structure
 
@@ -21,6 +35,7 @@ For detailed setup instructions, see [app/README.md](app/README.md).
 app/
 ├── screens/          # Application screens
 ├── components/       # Reusable UI components
+├── contexts/         # React Context providers
 ├── services/         # API and business logic
 ├── theme/           # Colors, typography, and styles
 ├── navigation/      # Navigation configuration
