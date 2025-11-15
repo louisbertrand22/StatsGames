@@ -1,0 +1,80 @@
+name: "Issue 1 — Initialisation du projet mobile"
+description: "Mise en place du projet mobile (Flutter ou React Native) avec structure de base."
+title: "Issue 1 — Setup du projet mobile"
+labels: ["setup", "mobile", "MVP"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🎯 Objectif
+        Initialiser la base technique de l'application mobile.  
+        Cette app affichera plus tard les statistiques de jeux Supercell et permettra le partage de profil via NFC.  
+        Cette issue prépare l’infrastructure technique nécessaire : structure, navigation, thème, écrans initiaux.
+
+  - type: markdown
+    attributes:
+      value: |
+        ## 🧩 Contexte
+        L'application sera développée en Flutter ou React Native.  
+        L’objectif de cette issue : créer une fondation stable pour les fonctionnalités futures (authentification, dashboard, NFC…).  
+        Le projet doit être organisé, modulable et fonctionnel dès sa première exécution.
+
+  - type: checkboxes
+    id: tasks_setup
+    attributes:
+      label: "🔧 Setup initial du projet"
+      options:
+        - label: "Créer un nouveau projet mobile (Flutter ou React Native selon le repo)"
+        - label: "Configurer une structure de base : /screens, /components, /services, /theme, /navigation"
+        - label: "Ajouter un fichier de configuration globale (couleurs, typo)"
+
+  - type: checkboxes
+    id: tasks_navigation
+    attributes:
+      label: "📡 Mise en place de la navigation"
+      options:
+        - label: "Créer un écran Loading/Splash minimal"
+        - label: "Créer un écran Home vide"
+        - label: "Configurer la navigation entre Splash → Home"
+
+  - type: checkboxes
+    id: ui
+    attributes:
+      label: "🎨 Mise en place du thème et UI"
+      options:
+        - label: "Créer un logo temporaire (simple texte)"
+        - label: "Configurer un thème clair global"
+        - label: "Créer des styles de texte (H1, H2, body)"
+
+  - type: checkboxes
+    id: devsetup
+    attributes:
+      label: "💻 Setup développement"
+      options:
+        - label: "Créer un README expliquant comment lancer l’app"
+        - label: "Ajouter un `.gitignore` adapté"
+        - label: "Vérifier que le build fonctionne sur Android et iOS"
+
+  - type: markdown
+    attributes:
+      value: |
+        ## 📁 Répertoires attendus
+        ```
+        /app
+          /screens
+          /components
+          /services
+          /theme
+          /navigation
+        ```
+
+  - type: markdown
+    attributes:
+      value: |
+        ## ✅ Critères d’acceptation
+        - L’application démarre sans erreur sur **Android et iOS**.  
+        - Splash screen → Home fonctionne.  
+        - Le thème global est en place.  
+        - La structure des dossiers est propre et prête pour le MVP.  
+        - Un README explique comment exécuter le projet.  
