@@ -1,82 +1,57 @@
-name: "Add Authentication System (Supabase Auth)"
-description: "Implement user authentication using Supabase Auth (email/password + OAuth providers) and integrate it into the mobile app."
-labels: ["auth", "backend", "frontend", "supabase"]
+name: "Feature: Add Authentication"
+description: "Implement user authentication using Supabase Auth for the StatsGames MVP."
+title: "[Auth] Implémenter l’authentification"
+labels: ["feature", "auth", "backend"]
+assignees: []
 
 body:
   - type: markdown
     attributes:
       value: |
-        # 🎯 Goal
-        Implement a full authentication system using **Supabase Auth**, including:
-        - Email/password sign-up & login
-        - OAuth providers (Google, Apple…)
-        - User session persistence
-        - Secure access to user-specific data
-        - Integration with the existing `profiles` table
-
-  - type: markdown
-    attributes:
-      value: |
-        # ✅ Tasks
-
-  - type: checklist
-    attributes:
-      options:
-        - label: "Install Supabase client on the app"
-        - label: "Configure Supabase Auth (email/password)"
-        - label: "Enable OAuth providers (Google, Apple)"
-        - label: "Create signup & login screens"
-        - label: "Implement session persistence and auto-login"
-        - label: "Add logout functionality"
-        - label: "Link auth user to `profiles` table on first login (insert profile row)"
-        - label: "Secure RLS policies verification"
-        - label: "Add reusable `useAuth()` hook or context"
-
-  - type: markdown
-    attributes:
-      value: |
-        # 📐 Technical Requirements
+        ## 🎯 Objectif  
+        Implémenter l’authentification complète pour l’application StatsGames en utilisant **Supabase Auth**.
 
   - type: textarea
+    id: goal
     attributes:
-      value: |
-        ### Backend (Supabase)
-        - Make sure RLS is **enabled** on all tables.
-        - Ensure `profiles.id` references `auth.users.id`.
-        - Add edge function or client logic to create a profile on sign-up.
-        
-        ### Frontend
-        - Use Supabase Auth client:
-          ```ts
-          supabase.auth.signInWithPassword({ email, password })
-          supabase.auth.signUp({ email, password })
-          supabase.auth.getSession()
-          supabase.auth.onAuthStateChange()
-          ```
-        - Store user session securely.
-        - Redirect user to Home screen after authentication.
-        - Display errors & loading states properly.
+      label: "🎯 Résultat attendu"
+      description: "Décris ce que l’auth doit permettre."
+      placeholder: |
+        Exemple :
+        - Sign in / Sign up
+        - Magic link
+        - Auth UI côté front
+        - Récupération des données du profil utilisateur
+    validations:
+      required: true
 
-  - type: markdown
+  - type: textarea
+    id: tasks
     attributes:
-      value: |
-        # 🧪 Acceptance Criteria
+      label: "🛠️ Tâches à réaliser"
+      description: "Liste les étapes nécessaires."
+      placeholder: |
+        Exemple :
+        - Activer Email Auth dans Supabase
+        - Créer un endpoint /auth/callback
+        - Ajouter l’AuthContext côté front
+        - Ajouter un composant LoginView
+        - Protéger les routes privées
+    validations:
+      required: true
 
-  - type: checklist
+  - type: dropdown
+    id: priority
     attributes:
+      label: "📌 Priorité"
       options:
-        - label: "User can sign up with email & password"
-        - label: "User can log in with email & password"
-        - label: "Google login works"
-        - label: "Apple login works (iOS only)"
-        - label: "Session persists after app restart"
-        - label: "User profile is created automatically on first login"
-        - label: "Unauthenticated users cannot access protected screens"
-        - label: "Logout works"
+        - High
+        - Medium
+        - Low
+      default: 0
 
-  - type: markdown
+  - type: textarea
+    id: notes
     attributes:
-      value: |
-        # 📎 Additional Notes
-        - This feature is required before implementing NFA sharing or stats synchronization.
-        - Use the official Supabase Auth UI patterns for best UX.
+      label: "📝 Notes supplémentaires"
+      placeholder: "Ajoute tout détail utile ici."
