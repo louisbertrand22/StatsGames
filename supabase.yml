@@ -1,0 +1,162 @@
+version: "1.0"
+database: "supabase"
+schema:
+  tables:
+
+    profiles:
+      primary_key: [id]
+      columns:
+        id:
+          type: uuid
+          references: auth.users(id)
+          on_delete: cascade
+        username:
+          type: text
+          unique: true
+        avatar_url:
+          type: text
+        created_at:
+          type: timestamptz
+          default: now()
+      rls:
+        enabled: true
+        policies:
+          - name: user_can_view_own_profile
+            action: select
+            using: "auth.uid() = id"
+          - name: user_can_edit_own_profile
+            action: update
+            using: "auth.uid() = id"
+
+    games:
+      primary_key: [id]
+      columns:
+        id:
+          type: uuid
+          default: gen_random_uuid()
+        name:
+          type: text
+          not_null: true
+        slug:
+          type: text
+          unique: true
+          not_null: true
+        icon_url:
+          type: text
+        created_at:
+          type: timestamptz
+          default: now()
+      rls:
+        enabled: true
+        policies:
+          - name: public_read_games
+            action: select
+            using: "true"
+
+    user_games:
+      primary_key: [id]
+      columns:
+        id:
+          type: uuid
+          default: gen_random_uuid()
+        user_id:
+          type: uuid
+          references: auth.users(id)
+          on_delete: cascade
+        game_id:
+          type: uuid
+          references: public.games(id)
+        installed_at:
+          type: timestamptz
+          default: now()
+      constraints:
+        unique: [user_id, game_id]
+      rls:
+        enabled: true
+        policies:
+          - name: user_can_view_own_games
+            action: select
+            using: "auth.uid() = user_id"
+          - name: user_can_add_games
+            action: insert
+            check: "auth.uid() = user_id"
+          - name: user_can_remove_games
+            action: delete
+            using: "auth.uid() = user_id"
+
+    friends:
+      primary_key: [id]
+      columns:
+        id:
+          type: uuid
+          default: gen_random_uuid()
+        user_id:
+          type: uuid
+          references: auth.users(id)
+          on_delete: cascade
+        friend_id:
+          type: uuid
+          references: auth.users(id)
+          on_delete: cascade
+        status:
+          type: text
+          default: "pending"
+        created_at:
+          type: timestamptz
+          default: now()
+      constraints:
+        unique: [user_id, friend_id]
+      rls:
+        enabled: true
+        policies:
+          - name: user_can_view_own_friends
+            action: select
+            using: "auth.uid() = user_id"
+          - name: user_can_add_friend_request
+            action: insert
+            check: "auth.uid() = user_id"
+          - name: user_can_update_friend_status
+            action: update
+            using: "auth.uid() = user_id"
+            check: "auth.uid() = user_id"
+
+    game_stats:
+      primary_key: [id]
+      columns:
+        id:
+          type: uuid
+          default: gen_random_uuid()
+        user_id:
+          type: uuid
+          references: auth.users(id)
+          on_delete: cascade
+        game_id:
+          type: uuid
+          references: public.games(id)
+        stats:
+          type: jsonb
+        updated_at:
+          type: timestamptz
+          default: now()
+      constraints:
+        unique: [user_id, game_id]
+      rls:
+        enabled: true
+        policies:
+          - name: read_own_or_friend_stats
+            action: select
+            using: |
+              auth.uid() = user_id OR EXISTS (
+                SELECT 1
+                FROM public.friends f
+                WHERE f.user_id = user_id
+                AND f.friend_id = auth.uid()
+                AND f.status = 'accepted'
+              )
+          - name: user_can_insert_own_stats
+            action: insert
+            check: "auth.uid() = user_id"
+          - name: user_can_update_own_stats
+            action: update
+            using: "auth.uid() = user_id"
+            check: "auth.uid() = user_id"
