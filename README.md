@@ -1,5 +1,33 @@
 # StatsGames
-Game Statistics with NFC 
+Game Statistics with NFC
+
+## 📱 Mobile Application
+
+A React Native mobile application built with Expo for displaying game statistics from Supercell games and sharing profiles via NFC.
+
+### Quick Start
+
+```bash
+cd app
+npm install
+npm start
+```
+
+For detailed setup instructions, see [app/README.md](app/README.md).
+
+### Project Structure
+
+```
+app/
+├── screens/          # Application screens
+├── components/       # Reusable UI components
+├── services/         # API and business logic
+├── theme/           # Colors, typography, and styles
+├── navigation/      # Navigation configuration
+└── assets/          # Images, fonts, etc.
+```
+
+---
 
 🟧 Issue 1 — Initialisation du projet mobile (Contexte détaillé pour Copilot)
 🎯 Objectif
