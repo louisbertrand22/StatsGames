@@ -71,4 +71,4 @@ profiles (
 )
 ```
 
-Row Level Security ensures users can only view and update their own profile.
+Row Level Security policies ensure users can only view, create, and update their own profile.
