@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { supabase } from '../services/supabase';
-import { autoConvertBooleans } from '../utils/typeConversion';
 
 const AuthContext = createContext({});
 
@@ -50,7 +49,7 @@ export const AuthProvider = ({ children }) => {
         console.error('Error fetching profile:', error);
       } else if (data) {
         // Convert any string boolean values to actual booleans
-        const processedData = autoConvertBooleans(data);
+        const processedData = data;
         setProfile(processedData);
       }
     } catch (error) {

@@ -1,13 +1,3 @@
-// Helper function to ensure boolean values
-const getBooleanValue = (envVar, defaultValue = false) => {
-  if (envVar === undefined || envVar === null) return defaultValue;
-  if (typeof envVar === 'boolean') return envVar;
-  if (typeof envVar === 'string') {
-    return envVar.toLowerCase() === 'true';
-  }
-  return Boolean(envVar);
-};
-
 export default {
   expo: {
     name: 'app',
@@ -22,7 +12,7 @@ export default {
       backgroundColor: '#ffffff'
     },
     ios: {
-      supportsTablet: getBooleanValue(process.env.EXPO_IOS_SUPPORTS_TABLET, true)
+      supportsTablet: true
     },
     android: {
       adaptiveIcon: {
