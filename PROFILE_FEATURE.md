@@ -6,8 +6,10 @@ The profile page allows authenticated users to manage their account settings and
 ## Features
 
 ### 1. Username Update
-- Users can change their display username
+- Users can set and change their display username
 - Username is stored in the Supabase `profiles` table
+- Profile is automatically created when users sign up
+- Profile is auto-created on login for existing users (backward compatibility)
 - Real-time validation ensures username is not empty
 - Changes are reflected immediately after update
 
@@ -52,8 +54,16 @@ The profile page allows authenticated users to manage their account settings and
 
 ### Components
 - **ProfileScreen.js**: Main profile management screen
+- **AuthContext.js**: Handles profile creation and updates
+
+### Profile Management
+- **Profile Creation**: Automatically created during user signup
+- **Backward Compatibility**: Auto-created on login if missing (for existing users)
+- **Profile Structure**: Contains `id`, `username`, `avatar_url`, and `created_at` fields
 
 ### Context Methods
+- `signUp(email, password)`: Creates user and profile automatically
+- `fetchProfile(userId)`: Fetches profile or creates one if missing
 - `updateUsername(newUsername)`: Updates username in profiles table
 - `updatePassword(newPassword)`: Updates user password via Supabase Auth
 - `updateProfilePicture(avatarUrl)`: Updates avatar URL in profiles table
