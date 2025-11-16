@@ -4,10 +4,12 @@ export const lightColors = {
   primary: '#007AFF',
   primaryLight: '#5AC8FA',
   primaryDark: '#0051D5',
+  secondary: '#6B7280',
   
   // Neutral colors
   background: '#FFFFFF',
   surface: '#F2F2F7',
+  card: '#F9FAFB',
   text: '#000000',
   textSecondary: '#3C3C43',
   textTertiary: '#8E8E93',
@@ -29,10 +31,12 @@ export const darkColors = {
   primary: '#0A84FF',
   primaryLight: '#64D2FF',
   primaryDark: '#0051D5',
+  secondary: '#9CA3AF',
   
   // Neutral colors
   background: '#000000',
   surface: '#1C1C1E',
+  card: '#2C2C2E',
   text: '#FFFFFF',
   textSecondary: '#EBEBF5',
   textTertiary: '#EBEBF599',

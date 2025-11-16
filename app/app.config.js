@@ -12,13 +12,28 @@ export default {
       backgroundColor: '#ffffff'
     },
     ios: {
-      supportsTablet: true
+      supportsTablet: true,
+      associatedDomains: ['applinks:statsgames.app']
     },
     android: {
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#ffffff'
-      }
+      },
+      intentFilters: [
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [
+            {
+              scheme: 'https',
+              host: 'statsgames.app',
+              pathPrefix: '/nfc'
+            }
+          ],
+          category: ['BROWSABLE', 'DEFAULT']
+        }
+      ]
     },
     web: {
       favicon: './assets/favicon.png'
@@ -26,6 +41,7 @@ export default {
     extra: {
       supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
       supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
-    }
+    },
+    scheme: 'statsgames'
   }
 };

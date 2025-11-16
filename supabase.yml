@@ -163,3 +163,37 @@ schema:
             action: update
             using: "auth.uid() = user_id"
             check: "auth.uid() = user_id"
+
+    nfc_shares:
+      primary_key: [id]
+      columns:
+        id:
+          type: uuid
+          default: gen_random_uuid()
+        user_id:
+          type: uuid
+          references: auth.users(id)
+          on_delete: cascade
+          not_null: true
+        token:
+          type: text
+          unique: true
+          not_null: true
+        expires_at:
+          type: timestamptz
+          not_null: true
+        created_at:
+          type: timestamptz
+          default: now()
+      rls:
+        enabled: true
+        policies:
+          - name: public_read_active_tokens
+            action: select
+            using: "expires_at > now()"
+          - name: user_can_create_own_token
+            action: insert
+            check: "auth.uid() = user_id"
+          - name: user_can_view_own_tokens
+            action: select
+            using: "auth.uid() = user_id"

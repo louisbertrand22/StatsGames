@@ -10,8 +10,8 @@ A React Native mobile application built with Expo for displaying game statistics
 - ✅ User Authentication (Email/Password + Magic Link)
 - ✅ Protected Routes
 - ✅ User Profile Management
+- ✅ NFC Profile Sharing (Share profiles via NFC tags or links)
 - 🚧 Game Statistics Dashboard (Coming soon)
-- 🚧 NFC Profile Sharing (Coming soon)
 
 ### Quick Start
 
@@ -28,6 +28,7 @@ npm start
 
 For detailed setup instructions, see [app/README.md](app/README.md).
 For authentication setup, see [app/AUTH_README.md](app/AUTH_README.md).
+For NFC profile sharing, see [NFC_USER_GUIDE.md](NFC_USER_GUIDE.md) and [NFC_IMPLEMENTATION.md](NFC_IMPLEMENTATION.md).
 
 ### Project Structure
 
@@ -37,6 +38,7 @@ app/
 ├── components/       # Reusable UI components
 ├── contexts/         # React Context providers
 ├── services/         # API and business logic
+├── hooks/           # Custom React hooks
 ├── theme/           # Colors, typography, and styles
 ├── navigation/      # Navigation configuration
 └── assets/          # Images, fonts, etc.
