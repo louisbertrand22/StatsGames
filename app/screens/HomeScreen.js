@@ -71,6 +71,17 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.actionCardDescription}>Customize your preferences</Text>
           </TouchableOpacity>
           
+          <TouchableOpacity 
+            style={styles.actionCard} 
+            onPress={() => navigation.navigate('NFCShare')}
+          >
+            <View style={styles.actionCardIcon}>
+              <Text style={styles.actionCardEmoji}>📱</Text>
+            </View>
+            <Text style={styles.actionCardTitle}>Share via NFC</Text>
+            <Text style={styles.actionCardDescription}>Share your profile using NFC</Text>
+          </TouchableOpacity>
+          
           <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
             <Text style={styles.signOutText}>{t('signOut')}</Text>
           </TouchableOpacity>

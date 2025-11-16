@@ -7,6 +7,8 @@ import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import NFCShareScreen from '../screens/NFCShareScreen';
+import NFCProfileScreen from '../screens/NFCProfileScreen';
 import { useAuth } from '../contexts/AuthContext';
 import { colors, containerStyles } from '../theme';
 
@@ -30,12 +32,16 @@ export default function AppNavigator() {
           headerShown: false,
         }}
       >
+        {/* Public routes accessible without authentication */}
+        <Stack.Screen name="NFCProfile" component={NFCProfileScreen} />
+        
         {user ? (
           // Authenticated routes
           <>
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
             <Stack.Screen name="Settings" component={SettingsScreen} />
+            <Stack.Screen name="NFCShare" component={NFCShareScreen} />
           </>
         ) : (
           // Non-authenticated routes
