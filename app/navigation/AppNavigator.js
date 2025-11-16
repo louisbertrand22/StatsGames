@@ -77,9 +77,6 @@ export default function AppNavigator() {
           headerShown: false,
         }}
       >
-        {/* Public routes accessible without authentication */}
-        <Stack.Screen name="NFCProfile" component={NFCProfileScreen} />
-        
         {user ? (
           // Authenticated routes
           <>
@@ -92,6 +89,9 @@ export default function AppNavigator() {
           // Non-authenticated routes
           <Stack.Screen name="Login" component={LoginScreen} />
         )}
+        
+        {/* Public routes accessible without authentication - last so not default */}
+        <Stack.Screen name="NFCProfile" component={NFCProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
