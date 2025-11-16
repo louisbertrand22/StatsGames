@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { colors, textStyles, containerStyles } from '../theme';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const { user, profile, signOut } = useAuth();
 
   return (
@@ -18,9 +18,18 @@ export default function HomeScreen() {
       </Text>
       
       {user && (
-        <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
-          <Text style={styles.signOutText}>Sign Out</Text>
-        </TouchableOpacity>
+        <>
+          <TouchableOpacity 
+            style={styles.profileButton} 
+            onPress={() => navigation.navigate('Profile')}
+          >
+            <Text style={styles.profileButtonText}>Edit Profile</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
+            <Text style={styles.signOutText}>Sign Out</Text>
+          </TouchableOpacity>
+        </>
       )}
     </View>
   );
@@ -47,6 +56,20 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: 32,
     marginBottom: 32,
+  },
+  profileButton: {
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    marginTop: 16,
+    minWidth: 150,
+  },
+  profileButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   signOutButton: {
     backgroundColor: colors.error,
