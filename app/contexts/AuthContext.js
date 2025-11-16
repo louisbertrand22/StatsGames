@@ -51,6 +51,25 @@ export const AuthProvider = ({ children }) => {
         // Convert any string boolean values to actual booleans
         const processedData = data;
         setProfile(processedData);
+      } else if (error && error.code === 'PGRST116') {
+        // Profile doesn't exist, create one
+        const { data: newProfile, error: createError } = await supabase
+          .from('profiles')
+          .insert([
+            { 
+              id: userId,
+              username: null,
+              avatar_url: null
+            }
+          ])
+          .select()
+          .single();
+        
+        if (createError) {
+          console.error('Error creating profile:', createError);
+        } else if (newProfile) {
+          setProfile(newProfile);
+        }
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -65,6 +84,25 @@ export const AuthProvider = ({ children }) => {
         password,
       });
       if (error) throw error;
+      
+      // Create profile entry for the new user
+      if (data?.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([
+            { 
+              id: data.user.id,
+              username: null,
+              avatar_url: null
+            }
+          ]);
+        
+        if (profileError) {
+          console.error('Error creating profile:', profileError);
+          // Don't throw error here - user is created, profile creation can be retried
+        }
+      }
+      
       return { data, error: null };
     } catch (error) {
       return { data: null, error };
