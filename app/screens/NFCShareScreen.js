@@ -17,7 +17,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { createNFCToken, cleanupExpiredTokens } from '../services/nfc';
 
-export default function NFCShareScreen({ navigation }) {
+export default function NFCShareScreen({ navigation, route }) {
   const { user } = useAuth();
   const { isDarkMode } = useTheme();
   const { t } = useLanguage();
@@ -177,6 +177,13 @@ export default function NFCShareScreen({ navigation }) {
       await writeNFC();
     }
   };
+
+  // Auto-generate token if requested from navigation
+  useEffect(() => {
+    if (route?.params?.autoGenerate && user && !tokenData && !loading) {
+      handleGenerateToken();
+    }
+  }, [route?.params?.autoGenerate, user, tokenData, loading]);
 
   return (
     <ScrollView style={styles.container}>
