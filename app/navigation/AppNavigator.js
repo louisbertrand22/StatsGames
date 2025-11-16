@@ -5,6 +5,7 @@ import { ActivityIndicator, View } from 'react-native';
 import LoadingScreen from '../screens/LoadingScreen';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 import { useAuth } from '../contexts/AuthContext';
 import { colors, containerStyles } from '../theme';
 
@@ -30,7 +31,10 @@ export default function AppNavigator() {
       >
         {user ? (
           // Authenticated routes
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <>
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Profile" component={ProfileScreen} />
+          </>
         ) : (
           // Non-authenticated routes
           <Stack.Screen name="Login" component={LoginScreen} />

@@ -1,0 +1,300 @@
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
+import { colors, textStyles } from '../theme';
+import { useAuth } from '../contexts/AuthContext';
+
+export default function ProfileScreen({ navigation }) {
+  const { user, profile, updateUsername, updatePassword, loading } = useAuth();
+  const [username, setUsername] = useState(profile?.username || '');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [localLoading, setLocalLoading] = useState(false);
+
+  const handleUpdateUsername = async () => {
+    if (!username.trim()) {
+      Alert.alert('Error', 'Please enter a username');
+      return;
+    }
+
+    if (username === profile?.username) {
+      Alert.alert('Info', 'Username is the same as current');
+      return;
+    }
+
+    setLocalLoading(true);
+    const { error } = await updateUsername(username);
+    setLocalLoading(false);
+
+    if (error) {
+      Alert.alert('Error', error.message);
+    } else {
+      Alert.alert('Success', 'Username updated successfully');
+    }
+  };
+
+  const handleUpdatePassword = async () => {
+    if (!newPassword.trim() || !confirmPassword.trim()) {
+      Alert.alert('Error', 'Please fill in all password fields');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      Alert.alert('Error', 'New passwords do not match');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      Alert.alert('Error', 'Password must be at least 6 characters');
+      return;
+    }
+
+    setLocalLoading(true);
+    const { error } = await updatePassword(newPassword);
+    setLocalLoading(false);
+
+    if (error) {
+      Alert.alert('Error', error.message);
+    } else {
+      Alert.alert('Success', 'Password updated successfully');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    }
+  };
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.backButtonText}>← Back</Text>
+          </TouchableOpacity>
+          <Text style={styles.title}>Profile Settings</Text>
+        </View>
+
+        <View style={styles.content}>
+          {/* User Info Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Account Information</Text>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Email:</Text>
+              <Text style={styles.infoValue}>{user?.email}</Text>
+            </View>
+          </View>
+
+          {/* Profile Picture Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Profile Picture</Text>
+            <View style={styles.profilePictureContainer}>
+              <View style={styles.profilePicturePlaceholder}>
+                <Text style={styles.profilePictureInitial}>
+                  {username ? username.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase()}
+                </Text>
+              </View>
+              <TouchableOpacity style={styles.uploadButton}>
+                <Text style={styles.uploadButtonText}>Upload Photo</Text>
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.helperText}>Photo upload coming soon</Text>
+          </View>
+
+          {/* Username Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Username</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter username"
+              placeholderTextColor={colors.textSecondary}
+              value={username}
+              onChangeText={setUsername}
+              autoCapitalize="none"
+            />
+            <TouchableOpacity
+              style={[styles.button, styles.primaryButton]}
+              onPress={handleUpdateUsername}
+              disabled={localLoading || loading}
+            >
+              {localLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Update Username</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {/* Password Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Change Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="New Password"
+              placeholderTextColor={colors.textSecondary}
+              value={newPassword}
+              onChangeText={setNewPassword}
+              secureTextEntry
+              autoCapitalize="none"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm New Password"
+              placeholderTextColor={colors.textSecondary}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry
+              autoCapitalize="none"
+            />
+            <TouchableOpacity
+              style={[styles.button, styles.primaryButton]}
+              onPress={handleUpdatePassword}
+              disabled={localLoading || loading}
+            >
+              {localLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Update Password</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
+  header: {
+    padding: 16,
+    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    backgroundColor: colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  backButton: {
+    marginBottom: 8,
+  },
+  backButtonText: {
+    color: colors.primary,
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  title: {
+    ...textStyles.h1,
+    fontSize: 28,
+  },
+  content: {
+    padding: 16,
+  },
+  section: {
+    marginBottom: 32,
+  },
+  sectionTitle: {
+    ...textStyles.h2,
+    fontSize: 18,
+    marginBottom: 16,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.divider,
+  },
+  infoLabel: {
+    ...textStyles.body,
+    fontWeight: '600',
+    marginRight: 12,
+    minWidth: 80,
+  },
+  infoValue: {
+    ...textStyles.body,
+    color: colors.textSecondary,
+    flex: 1,
+  },
+  profilePictureContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  profilePicturePlaceholder: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  profilePictureInitial: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  uploadButton: {
+    backgroundColor: colors.surface,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  uploadButtonText: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  helperText: {
+    fontSize: 12,
+    color: colors.textTertiary,
+    marginTop: 8,
+  },
+  input: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+    fontSize: 16,
+    color: colors.text,
+  },
+  button: {
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+  },
+  primaryButton: {
+    backgroundColor: colors.primary,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});

@@ -117,6 +117,52 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateUsername = async (newUsername) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .update({ username: newUsername })
+        .eq('id', user.id);
+
+      if (error) throw error;
+      
+      // Refresh profile data
+      await fetchProfile(user.id);
+      return { data, error: null };
+    } catch (error) {
+      return { data: null, error };
+    }
+  };
+
+  const updatePassword = async (newPassword) => {
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+      if (error) throw error;
+      return { data, error: null };
+    } catch (error) {
+      return { data: null, error };
+    }
+  };
+
+  const updateProfilePicture = async (avatarUrl) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .update({ avatar_url: avatarUrl })
+        .eq('id', user.id);
+
+      if (error) throw error;
+      
+      // Refresh profile data
+      await fetchProfile(user.id);
+      return { data, error: null };
+    } catch (error) {
+      return { data: null, error };
+    }
+  };
+
   const value = {
     user,
     session,
@@ -126,6 +172,9 @@ export const AuthProvider = ({ children }) => {
     signIn,
     signOut,
     sendMagicLink,
+    updateUsername,
+    updatePassword,
+    updateProfilePicture,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
