@@ -66,7 +66,24 @@ export const AuthProvider = ({ children }) => {
           .single();
         
         if (createError) {
-          console.error('Error creating profile:', createError);
+          // Handle duplicate key error gracefully (race condition from concurrent inserts)
+          if (createError.code === '23505') {
+            console.log('Profile already exists (created concurrently), fetching...');
+            // Profile was created by another process, fetch it
+            const { data: existingProfile, error: fetchError } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', userId)
+              .single();
+            
+            if (fetchError) {
+              console.error('Error fetching existing profile:', fetchError);
+            } else if (existingProfile) {
+              setProfile(existingProfile);
+            }
+          } else {
+            console.error('Error creating profile:', createError);
+          }
         } else if (newProfile) {
           setProfile(newProfile);
         }
@@ -85,23 +102,8 @@ export const AuthProvider = ({ children }) => {
       });
       if (error) throw error;
       
-      // Create profile entry for the new user
-      if (data?.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert([
-            { 
-              id: data.user.id,
-              username: null,
-              avatar_url: null
-            }
-          ]);
-        
-        if (profileError) {
-          console.error('Error creating profile:', profileError);
-          // Don't throw error here - user is created, profile creation can be retried
-        }
-      }
+      // Profile creation is handled automatically by the auth state change listener
+      // which calls fetchProfile() - no need to create it here
       
       return { data, error: null };
     } catch (error) {
