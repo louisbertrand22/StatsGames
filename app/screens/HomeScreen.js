@@ -1,20 +1,28 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { colors, textStyles, containerStyles } from '../theme';
+import { lightColors, darkColors } from '../theme';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function HomeScreen({ navigation }) {
   const { user, profile, signOut } = useAuth();
+  const { isDarkMode } = useTheme();
+  const { t } = useLanguage();
+  
+  // Get colors based on theme
+  const colors = isDarkMode ? darkColors : lightColors;
+  const styles = getStyles(colors);
 
   return (
-    <View style={containerStyles.centered}>
+    <View style={styles.container}>
       <Text style={styles.logo}>StatsGames</Text>
-      <Text style={styles.title}>Welcome{profile?.username ? `, ${profile.username}` : ''}!</Text>
+      <Text style={styles.title}>{t('welcome')}{profile?.username ? `, ${profile.username}` : ''}!</Text>
       {user && (
         <Text style={styles.email}>{user.email}</Text>
       )}
       <Text style={styles.description}>
-        Your game statistics dashboard will be here.
+        {t('welcomeMessage')}
       </Text>
       
       {user && (
@@ -23,11 +31,18 @@ export default function HomeScreen({ navigation }) {
             style={styles.profileButton} 
             onPress={() => navigation.navigate('Profile')}
           >
-            <Text style={styles.profileButtonText}>Edit Profile</Text>
+            <Text style={styles.profileButtonText}>{t('editProfile')}</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.settingsButton} 
+            onPress={() => navigation.navigate('Settings')}
+          >
+            <Text style={styles.settingsButtonText}>{t('settings')}</Text>
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
-            <Text style={styles.signOutText}>Sign Out</Text>
+            <Text style={styles.signOutText}>{t('signOut')}</Text>
           </TouchableOpacity>
         </>
       )}
@@ -35,23 +50,32 @@ export default function HomeScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   logo: {
-    ...textStyles.h2,
+    fontSize: 24,
+    fontWeight: 'bold',
     color: colors.primary,
     marginBottom: 24,
   },
   title: {
-    ...textStyles.h1,
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: colors.text,
     marginBottom: 16,
   },
   email: {
-    ...textStyles.body,
+    fontSize: 16,
     color: colors.textSecondary,
     marginBottom: 8,
   },
   description: {
-    ...textStyles.body,
+    fontSize: 16,
     color: colors.textSecondary,
     textAlign: 'center',
     paddingHorizontal: 32,
@@ -67,6 +91,22 @@ const styles = StyleSheet.create({
   },
   profileButtonText: {
     color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  settingsButton: {
+    backgroundColor: colors.surface,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    marginTop: 16,
+    minWidth: 150,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  settingsButtonText: {
+    color: colors.primary,
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
