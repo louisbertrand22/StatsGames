@@ -1,0 +1,138 @@
+name: "Feature: Implement NFC Sharing (Profile)"
+description: "Add NFC-based profile sharing so users can tap phones to exchange a temporary profile token and view public stats."
+title: "[Feature] Implémenter le partage de profil via NFC"
+labels: ["feature", "nfc", "mobile", "backend"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🎯 Objectif
+        Implémenter le partage de profil **via NFC** : quand un utilisateur active le partage et approche son téléphone d’un autre appareil, l'app écrit une URL NDEF contenant un token temporaire. Le smartphone récepteur ouvre cette URL (ou la lit dans-app) et affiche le profil public + stats de l'utilisateur émetteur.
+
+        Ce ticket couvre : backend (table & endpoints), mobile (écriture NFC + lecture), page frontend `/nfc/[token]`, et sécurité (RLS & TTL).
+
+  - type: textarea
+    id: context
+    attributes:
+      label: "📚 Contexte technique"
+      description: "Rappelle les points importants pour l'implémentation (Supabase, stack mobile, contraintes)."
+      placeholder: |
+        Exemple :
+        - Backend: Supabase (Postgres + RLS)
+        - Mobile: React Native (react-native-nfc-manager) ou Flutter (nfc_manager)
+        - Token TTL : 15 minutes par défaut
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: "🛠️ Tâches principales (décrire l'implémentation étape par étape)"
+      description: "Détaille les sous-tâches techniques à accomplir."
+      placeholder: |
+        Exemple de checklist (écrire chaque tâche sur une ligne) :
+        - Créer table `nfc_shares` en DB
+        - Ajouter RLS policies (public read sur token actif)
+        - Endpoint POST /nfc/create-token
+        - Endpoint GET /nfc/:token (ou page SSR /nfc/[token])
+        - Implémenter writer NFC (NDEF) côté mobile
+        - Implémenter reader NFC côté mobile / fallback pour open URL
+        - UI: écran "Partager via NFC" + indicateur TTL
+        - Tests e2e (tap device A -> device B affiche profil)
+    validations:
+      required: true
+
+  - type: input
+    id: ttl_minutes
+    attributes:
+      label: "⏱️ TTL par défaut pour les tokens (minutes)"
+      description: "Durée de validité par défaut d'un token NFC (ex: 15)"
+      placeholder: "15"
+    validations:
+      required: true
+
+  - type: textarea
+    id: api_contract
+    attributes:
+      label: "🔗 Contrat API attendu (exemples de requêtes / réponses)"
+      description: "Décris les endpoints, payloads et réponses attendues."
+      placeholder: |
+        Exemple :
+        POST /nfc/create-token
+        body: { user_id: auth.uid() }
+        response: { token: "abc123", url: "https://statsgames.app/nfc/abc123", expires_at: "..." }
+
+        GET /nfc/:token
+        response: { user: { id, username, avatar_url }, stats: {...} }
+    validations:
+      required: true
+
+  - type: textarea
+    id: mobile_notes
+    attributes:
+      label: "📱 Notes / recommandations mobile"
+      description: "Libs, NDEF format, permissions, fallback behavior."
+      placeholder: |
+        Exemple :
+        - React Native : use react-native-nfc-manager
+        - Format NDEF : URI record with https://statsgames.app/nfc/{token}
+        - Sur iOS : utiliser CoreNFC / vérifier entitlements
+        - Fallback : si NFC non supporté, copier token dans le presse-papier
+    validations:
+      required: true
+
+  - type: dropdown
+    id: security_visibility
+    attributes:
+      label: "🔐 Visibilité du profil partagé via token"
+      description: "Choisir quelles données sont visibles via le token NFC."
+      options:
+        - pseudonyme + avatar + stats publiques (recommended)
+        - uniquement pseudonyme + avatar
+        - pseudonyme + avatar + stats détaillées
+      default: 0
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "✅ Critères d'acceptation"
+      description: "Liste claire des conditions qui valident la tâche."
+      placeholder: |
+        Exemple :
+        - Table `nfc_shares` créée et migrée
+        - Endpoint POST /nfc/create-token renvoie token + url + expires_at
+        - Endpoint GET /nfc/:token retourne profil public si token actif
+        - App mobile encode correctement une URI NDEF et la diffuse
+        - App mobile réceptrice ouvre la page /nfc/:token et affiche le profil
+        - Token expire après TTL et n'est plus accessible
+        - Tests manuels : Tap A -> B affiche profil (Android & iOS)
+    validations:
+      required: true
+
+  - type: textarea
+    id: testing
+    attributes:
+      label: "🧪 Plan de tests"
+      description: "Procédure pour QA et tests e2e (devices requis, scénarios)."
+      placeholder: |
+        Exemple :
+        - Test 1: Device A (Android) writer -> Device B (Android) reader
+        - Test 2: Device A (iOS) writer -> Device B (Android) reader
+        - Test 3: NFC disabled fallback (copier token)
+        - Test 4: Token expired access denied
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: "🔎 Références & liens utiles"
+      description: "Liens vers docs Supabase, libs NFC, exemples NDEF."
+      placeholder: |
+        - Supabase policies: https://supabase.com/docs
+        - react-native-nfc-manager: https://github.com/whitedogg13/react-native-nfc-manager
+        - NDEF URI record spec
+    validations:
+      required: false
