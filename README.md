@@ -1,138 +1,91 @@
 # StatsGames
-Game Statistics with NFC
 
-## 📱 Mobile Application
+Game Statistics with NFC - Flutter Mobile Application
 
-A React Native mobile application built with Expo for displaying game statistics from Supercell games and sharing profiles via NFC.
+## 📱 About
 
-### Features
+A Flutter mobile application for displaying game statistics from Supercell games and sharing profiles via NFC.
 
-- ✅ User Authentication (Email/Password + Magic Link)
-- ✅ Protected Routes
-- ✅ User Profile Management
-- 🚧 Game Statistics Dashboard (Coming soon)
-- 🚧 NFC Profile Sharing (Coming soon)
+### Planned Features
 
-### Quick Start
+- 🚧 User Authentication (Email/Password + Magic Link)
+- 🚧 Protected Routes
+- 🚧 User Profile Management
+- 🚧 Game Statistics Dashboard
+- 🚧 NFC Profile Sharing
 
+## 🚀 Getting Started
+
+This repository has been cleaned and is ready for Flutter development.
+
+### Prerequisites
+
+- Flutter SDK (latest stable version)
+- Dart SDK (included with Flutter)
+- Android Studio / Xcode for mobile development
+- VS Code or Android Studio as IDE
+
+### Setup Instructions
+
+1. Install Flutter by following the [official Flutter installation guide](https://docs.flutter.dev/get-started/install)
+
+2. Verify Flutter installation:
 ```bash
-cd app
-npm install
-
-# Copy environment template and configure with your Supabase credentials
-cp .env.example .env
-
-# Start the development server
-npm start
+flutter doctor
 ```
 
-For detailed setup instructions, see [app/README.md](app/README.md).
-For authentication setup, see [app/AUTH_README.md](app/AUTH_README.md).
-
-### Project Structure
-
-```
-app/
-├── screens/          # Application screens
-├── components/       # Reusable UI components
-├── contexts/         # React Context providers
-├── services/         # API and business logic
-├── theme/           # Colors, typography, and styles
-├── navigation/      # Navigation configuration
-└── assets/          # Images, fonts, etc.
+3. Create a new Flutter project in this repository:
+```bash
+flutter create .
 ```
 
----
+4. Install dependencies:
+```bash
+flutter pub get
+```
 
-🟧 Issue 1 — Initialisation du projet mobile (Contexte détaillé pour Copilot)
-🎯 Objectif
+5. Run the application:
+```bash
+# For iOS
+flutter run -d ios
 
-Créer la base de l’application mobile pour notre projet : une app permettant d'afficher des statistiques de jeux (Supercell) et de partager un profil via NFC.
-Cette issue vise à mettre en place l’environnement initial, la structure du projet et les premiers écrans.
-Cette étape sert de fondation à toutes les fonctionnalités futures (authentification, dashboard, NFC, etc.).
+# For Android
+flutter run -d android
 
-🧩 Contexte
+# For Web
+flutter run -d chrome
+```
 
-Nous développons une application mobile multiplateforme.
-Le but de cette issue est d’initialiser proprement le projet Flutter ou React Native (selon ce qui est installé dans ton repo — si aucun choix n’est fait, choisir Flutter).
+## 📁 Project Structure
 
-L’application contiendra plus tard :
+Once initialized, the Flutter project will follow this structure:
 
-un système d’authentification,
+```
+lib/
+├── main.dart           # Application entry point
+├── screens/            # Application screens
+├── widgets/            # Reusable UI components
+├── services/           # API and business logic
+├── models/             # Data models
+├── providers/          # State management
+└── theme/              # App theme and styling
+```
 
-l’ajout de tags Supercell,
+## 🔧 Backend Integration
 
-la lecture des statistiques via notre backend,
+The project uses Supabase as the backend. Configuration can be found in `supabase.yml`.
 
-et le partage NFC du profil.
+## 📝 Development Notes
 
-Avant tout cela, il nous faut une structure technique propre, stable et modulaire afin que Copilot puisse construire les écrans et services futurs de façon cohérente.
+- This repository was previously a React Native/Expo project and has been cleaned for Flutter migration
+- Supabase configuration has been preserved for backend integration
+- Follow Flutter best practices and clean architecture principles
 
-📌 Tâches détaillées
-🔹 Setup général
+## 🎯 Next Steps
 
- Créer un nouveau projet mobile (Flutter ou React Native selon le framework choisi par le repo).
-
- Configurer les dossiers de base (screens, components, services).
-
- Ajouter un fichier de configuration globale pour les couleurs et la typographie.
-
-🔹 Navigation
-
- Ajouter une navigation basique :
-
-un HomeScreen vide
-
-un LoadingScreen (splash minimal)
-
- Créer la logique permettant de naviguer entre les deux.
-
-🔹 UI de base
-
- Créer un logo temporaire (simple texte centré).
-
- Ajouter un thème clair par défaut (background, couleurs principales).
-
- Implémenter un système de styles pour les textes (H1, H2, body).
-
-🔹 Setup Dev
-
- Ajouter un README minimal expliquant comment lancer l’application.
-
- Ajouter un .gitignore adapté.
-
- Vérifier que le build fonctionne pour Android et iOS.
-
-🧪 Critères d’acceptation
-
-Pour considérer cette issue comme terminée :
-
-L’app doit se lancer sur Android et iOS sans erreur.
-
-La navigation doit afficher :
-→ un écran Splash / Loading,
-→ puis un écran Home vide.
-
-La structure des dossiers doit être logique et prête pour les futures features.
-
-Le thème global (couleurs + texte) doit être configuré.
-
-Le README doit expliquer comment exécuter l’application en local.
-
-📁 Répertoires concernés
-/app
-  /screens
-  /components
-  /services
-  /theme
-  /navigation
-
-💡 Notes pour Copilot
-
-Utiliser des bonnes pratiques de structure (clean architecture légère).
-
-Préparer le terrain pour ajouter plus tard : authentification, API, NFC.
-
-Aucun backend n’est encore branché à ce stade.
-
-Le but est uniquement d’avoir une base saine pour travailler proprement.
+1. Initialize Flutter project with `flutter create`
+2. Set up project structure (screens, widgets, services)
+3. Configure Supabase integration
+4. Implement authentication system
+5. Build game statistics dashboard
+6. Add NFC functionality
