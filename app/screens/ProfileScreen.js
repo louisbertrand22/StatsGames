@@ -13,17 +13,25 @@ import {
   Image,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { colors, textStyles } from '../theme';
+import { lightColors, darkColors } from '../theme';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function ProfileScreen({ navigation }) {
   const { user, profile, updateUsername, updatePassword, updateProfilePicture, loading } = useAuth();
+  const { isDarkMode } = useTheme();
+  const { t } = useLanguage();
   const [username, setUsername] = useState(profile?.username || '');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [localLoading, setLocalLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(profile?.avatar_url || null);
+
+  // Get colors based on theme
+  const colors = isDarkMode ? darkColors : lightColors;
+  const styles = getStyles(colors);
 
   // Update local state when profile changes
   useEffect(() => {
@@ -137,24 +145,24 @@ export default function ProfileScreen({ navigation }) {
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <Text style={styles.backButtonText}>← Back</Text>
+            <Text style={styles.backButtonText}>← {t('back')}</Text>
           </TouchableOpacity>
-          <Text style={styles.title}>Profile Settings</Text>
+          <Text style={styles.title}>{t('profileSettings')}</Text>
         </View>
 
         <View style={styles.content}>
           {/* User Info Section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Account Information</Text>
+            <Text style={styles.sectionTitle}>{t('accountInformation')}</Text>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Email:</Text>
+              <Text style={styles.infoLabel}>{t('email')}:</Text>
               <Text style={styles.infoValue}>{user?.email}</Text>
             </View>
           </View>
 
           {/* Profile Picture Section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Profile Picture</Text>
+            <Text style={styles.sectionTitle}>{t('profilePicture')}</Text>
             <View style={styles.profilePictureContainer}>
               {selectedImage ? (
                 <Image 
@@ -170,21 +178,21 @@ export default function ProfileScreen({ navigation }) {
               )}
               <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
                 <Text style={styles.uploadButtonText}>
-                  {selectedImage ? 'Change Photo' : 'Upload Photo'}
+                  {selectedImage ? t('changePhoto') : t('uploadPhoto')}
                 </Text>
               </TouchableOpacity>
             </View>
             <Text style={styles.helperText}>
-              Click to select a profile picture from your device
+              {t('clickToSelect')}
             </Text>
           </View>
 
           {/* Username Section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Username</Text>
+            <Text style={styles.sectionTitle}>{t('username')}</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter username"
+              placeholder={t('enterUsername')}
               placeholderTextColor={colors.textSecondary}
               value={username}
               onChangeText={setUsername}
@@ -198,17 +206,17 @@ export default function ProfileScreen({ navigation }) {
               {localLoading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.buttonText}>Update Username</Text>
+                <Text style={styles.buttonText}>{t('updateUsername')}</Text>
               )}
             </TouchableOpacity>
           </View>
 
           {/* Password Section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Change Password</Text>
+            <Text style={styles.sectionTitle}>{t('changePassword')}</Text>
             <TextInput
               style={styles.input}
-              placeholder="New Password"
+              placeholder={t('newPassword')}
               placeholderTextColor={colors.textSecondary}
               value={newPassword}
               onChangeText={setNewPassword}
@@ -217,7 +225,7 @@ export default function ProfileScreen({ navigation }) {
             />
             <TextInput
               style={styles.input}
-              placeholder="Confirm New Password"
+              placeholder={t('confirmNewPassword')}
               placeholderTextColor={colors.textSecondary}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
@@ -232,7 +240,7 @@ export default function ProfileScreen({ navigation }) {
               {localLoading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.buttonText}>Update Password</Text>
+                <Text style={styles.buttonText}>{t('updatePassword')}</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -242,7 +250,7 @@ export default function ProfileScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
@@ -266,8 +274,9 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   title: {
-    ...textStyles.h1,
     fontSize: 28,
+    fontWeight: 'bold',
+    color: colors.text,
   },
   content: {
     padding: 16,
@@ -276,8 +285,9 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   sectionTitle: {
-    ...textStyles.h2,
     fontSize: 18,
+    fontWeight: '700',
+    color: colors.text,
     marginBottom: 16,
   },
   infoRow: {
@@ -287,13 +297,14 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.divider,
   },
   infoLabel: {
-    ...textStyles.body,
+    fontSize: 16,
     fontWeight: '600',
+    color: colors.text,
     marginRight: 12,
     minWidth: 80,
   },
   infoValue: {
-    ...textStyles.body,
+    fontSize: 16,
     color: colors.textSecondary,
     flex: 1,
   },
@@ -341,7 +352,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   input: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 8,
