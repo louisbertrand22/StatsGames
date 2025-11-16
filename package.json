@@ -1,0 +1,23 @@
+{
+  "name": "statsgames",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Root workspace for StatsGames (Supabase Auth + React Native Expo).",
+  "license": "UNLICENSED",
+  "workspaces": [
+    "app"
+  ],
+  "scripts": {
+    "start": "npm --workspace app run start",
+    "android": "npm --workspace app run android",
+    "ios": "npm --workspace app run ios",
+    "web": "npm --workspace app run web"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "react-dom": "19.1.0",
+    "react-native-web": "^0.21.0"
+  }
+}
