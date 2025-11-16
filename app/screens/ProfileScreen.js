@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -24,6 +24,14 @@ export default function ProfileScreen({ navigation }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [localLoading, setLocalLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(profile?.avatar_url || null);
+
+  // Update local state when profile changes
+  useEffect(() => {
+    if (profile) {
+      setUsername(profile.username || '');
+      setSelectedImage(profile.avatar_url || null);
+    }
+  }, [profile]);
 
   const handleUpdateUsername = async () => {
     if (!username.trim()) {
