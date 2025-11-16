@@ -10,17 +10,20 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Image,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { colors, textStyles } from '../theme';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function ProfileScreen({ navigation }) {
-  const { user, profile, updateUsername, updatePassword, loading } = useAuth();
+  const { user, profile, updateUsername, updatePassword, updateProfilePicture, loading } = useAuth();
   const [username, setUsername] = useState(profile?.username || '');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [localLoading, setLocalLoading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(profile?.avatar_url || null);
 
   const handleUpdateUsername = async () => {
     if (!username.trim()) {
@@ -74,6 +77,44 @@ export default function ProfileScreen({ navigation }) {
     }
   };
 
+  const pickImage = async () => {
+    // Request permission
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (status !== 'granted') {
+      Alert.alert('Permission Required', 'Please grant permission to access your photos');
+      return;
+    }
+
+    // Launch image picker
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      const imageUri = result.assets[0].uri;
+      setSelectedImage(imageUri);
+      
+      // Upload to Supabase would go here
+      // For now, just update the local state
+      Alert.alert(
+        'Image Selected', 
+        'Profile picture upload to server will be implemented soon. For now, the image is stored locally.'
+      );
+      
+      // TODO: Implement actual upload to Supabase Storage
+      // const { error } = await updateProfilePicture(imageUri);
+      // if (error) {
+      //   Alert.alert('Error', 'Failed to upload profile picture');
+      // } else {
+      //   Alert.alert('Success', 'Profile picture updated!');
+      // }
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -107,16 +148,27 @@ export default function ProfileScreen({ navigation }) {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Profile Picture</Text>
             <View style={styles.profilePictureContainer}>
-              <View style={styles.profilePicturePlaceholder}>
-                <Text style={styles.profilePictureInitial}>
-                  {username ? username.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase()}
+              {selectedImage ? (
+                <Image 
+                  source={{ uri: selectedImage }} 
+                  style={styles.profilePictureImage}
+                />
+              ) : (
+                <View style={styles.profilePicturePlaceholder}>
+                  <Text style={styles.profilePictureInitial}>
+                    {username ? username.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase()}
+                  </Text>
+                </View>
+              )}
+              <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
+                <Text style={styles.uploadButtonText}>
+                  {selectedImage ? 'Change Photo' : 'Upload Photo'}
                 </Text>
-              </View>
-              <TouchableOpacity style={styles.uploadButton}>
-                <Text style={styles.uploadButtonText}>Upload Photo</Text>
               </TouchableOpacity>
             </View>
-            <Text style={styles.helperText}>Photo upload coming soon</Text>
+            <Text style={styles.helperText}>
+              Click to select a profile picture from your device
+            </Text>
           </View>
 
           {/* Username Section */}
@@ -249,6 +301,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 16,
+  },
+  profilePictureImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     marginRight: 16,
   },
   profilePictureInitial: {
