@@ -24,6 +24,9 @@ schema:
           - name: user_can_view_own_profile
             action: select
             using: "auth.uid() = id"
+          - name: user_can_insert_own_profile
+            action: insert
+            check: "auth.uid() = id"
           - name: user_can_edit_own_profile
             action: update
             using: "auth.uid() = id"
