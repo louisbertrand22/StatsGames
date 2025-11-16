@@ -9,13 +9,12 @@ Share your StatsGames profile and statistics with friends using NFC (Near Field 
 ### Sharing Your Profile
 
 1. **Open the App** → Navigate to Home
-2. **Tap "Share via NFC"** → Opens the NFC Share screen
-3. **Generate Token** → Tap "Generate Token" button
-4. **Choose Sharing Method:**
+2. **Tap "Start Sharing"** → Opens the NFC Share screen and automatically generates a token
+3. **Choose Sharing Method:**
    - **NFC Tag**: Tap "Write to NFC Tag" and hold your device near an NFC tag
    - **Copy Link**: Tap "Copy Link" to copy the URL and share it via messaging apps, email, etc.
-5. **Share** → Give the NFC tag or link to friends
-6. **Expire** → Token automatically expires after 15 minutes
+4. **Share** → Give the NFC tag or link to friends
+5. **Expire** → Token automatically expires after 15 minutes
 
 ### Viewing a Shared Profile
 
