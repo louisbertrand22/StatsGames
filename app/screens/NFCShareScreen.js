@@ -72,7 +72,7 @@ export default function NFCShareScreen({ navigation, route }) {
       if (supported) {
         await NfcManager.start();
         const enabled = await NfcManager.isEnabled();
-        setNfcEnabled(enabled);
+        setNfcEnabled(!!enabled);
       }
     } catch (error) {
       console.error('Error checking NFC availability:', error);
