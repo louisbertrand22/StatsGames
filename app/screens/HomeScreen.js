@@ -40,7 +40,7 @@ export default function HomeScreen({ navigation }) {
 
       {/* Welcome Card */}
       <View style={styles.welcomeCard}>
-        <Text style={styles.logo}>StatsGames</Text>
+        <Text style={styles.logo}>{t('appName')}</Text>
         <Text style={styles.description}>
           {t('welcomeMessage')}
         </Text>
