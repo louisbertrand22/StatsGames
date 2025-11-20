@@ -51,6 +51,17 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.actionsContainer}>
           <TouchableOpacity 
             style={styles.actionCard} 
+            onPress={() => navigation.navigate('Games')}
+          >
+            <View style={styles.actionCardIcon}>
+              <Text style={styles.actionCardEmoji}>🎮</Text>
+            </View>
+            <Text style={styles.actionCardTitle}>My Games</Text>
+            <Text style={styles.actionCardDescription}>Link games to your profile</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.actionCard} 
             onPress={() => navigation.navigate('Profile')}
           >
             <View style={styles.actionCardIcon}>
