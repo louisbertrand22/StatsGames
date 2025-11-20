@@ -5,8 +5,6 @@
  * a live Supabase connection. They test the core logic and error handling.
  */
 
-import { jest } from '@jest/globals';
-
 // Mock Supabase client
 const mockSupabase = {
   from: jest.fn(),
@@ -16,6 +14,9 @@ const mockSupabase = {
 jest.mock('../services/supabase', () => ({
   supabase: mockSupabase,
 }));
+
+// Import after mocking
+const { fetchGames, fetchUserGames, linkGameToUser, unlinkGameFromUser } = require('../services/games');
 
 describe('Games Service', () => {
   beforeEach(() => {
@@ -50,7 +51,6 @@ describe('Games Service', () => {
         }),
       });
 
-      const { fetchGames } = await import('../services/games');
       const result = await fetchGames();
 
       expect(result.data).toBeDefined();
@@ -92,7 +92,6 @@ describe('Games Service', () => {
         }),
       });
 
-      const { fetchGames } = await import('../services/games');
       const result = await fetchGames();
 
       expect(result.data).toBeDefined();
@@ -122,7 +121,6 @@ describe('Games Service', () => {
         }),
       });
 
-      const { fetchGames } = await import('../services/games');
       const result = await fetchGames();
 
       expect(result.error).toBeDefined();
@@ -157,7 +155,6 @@ describe('Games Service', () => {
         }),
       });
 
-      const { fetchUserGames } = await import('../services/games');
       const result = await fetchUserGames('user-123');
 
       expect(result.data).toBeDefined();
@@ -187,7 +184,6 @@ describe('Games Service', () => {
         }),
       });
 
-      const { linkGameToUser } = await import('../services/games');
       const result = await linkGameToUser('user-123', 'game-1');
 
       expect(result.data).toBeDefined();
@@ -222,7 +218,6 @@ describe('Games Service', () => {
           }),
         });
 
-        const { linkGameToUser } = await import('../services/games');
         const result = await linkGameToUser('user-123', game.id);
 
         expect(result.data).toBeDefined();
@@ -247,7 +242,6 @@ describe('Games Service', () => {
         }),
       });
 
-      const { linkGameToUser } = await import('../services/games');
       const result = await linkGameToUser('user-123', 'game-1');
 
       expect(result.error).toBeDefined();
@@ -267,7 +261,6 @@ describe('Games Service', () => {
         }),
       });
 
-      const { unlinkGameFromUser } = await import('../services/games');
       const result = await unlinkGameFromUser('user-123', 'game-1');
 
       expect(result.error).toBeNull();
@@ -284,7 +277,6 @@ describe('Games Service', () => {
         }),
       });
 
-      const { unlinkGameFromUser } = await import('../services/games');
       const result = await unlinkGameFromUser('user-123', 'game-1');
 
       expect(result.error).toBeDefined();
