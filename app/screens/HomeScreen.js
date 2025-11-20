@@ -15,6 +15,14 @@ export default function HomeScreen({ navigation }) {
   const colors = isDarkMode ? darkColors : lightColors;
   const styles = getStyles(colors);
 
+  // Icon background colors for each action card
+  const iconColors = {
+    games: isDarkMode ? 'rgba(10, 132, 255, 0.2)' : 'rgba(0, 122, 255, 0.15)',
+    profile: isDarkMode ? 'rgba(48, 209, 88, 0.2)' : 'rgba(52, 199, 89, 0.15)',
+    settings: isDarkMode ? 'rgba(255, 159, 10, 0.2)' : 'rgba(255, 149, 0, 0.15)',
+    nfc: isDarkMode ? 'rgba(191, 90, 242, 0.2)' : 'rgba(175, 82, 222, 0.15)',
+  };
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       {/* Header with Profile Picture and Gradient Background */}
@@ -84,7 +92,7 @@ export default function HomeScreen({ navigation }) {
                 end={{ x: 1, y: 1 }}
                 style={styles.actionCardGradient}
               >
-                <View style={styles.actionCardIcon}>
+                <View style={[styles.actionCardIcon, { backgroundColor: iconColors.games }]}>
                   <Text style={styles.actionCardEmoji}>🎮</Text>
                 </View>
                 <Text style={styles.actionCardTitle}>My Games</Text>
@@ -102,7 +110,7 @@ export default function HomeScreen({ navigation }) {
                 end={{ x: 1, y: 1 }}
                 style={styles.actionCardGradient}
               >
-                <View style={[styles.actionCardIcon, { backgroundColor: isDarkMode ? 'rgba(48, 209, 88, 0.2)' : 'rgba(52, 199, 89, 0.15)' }]}>
+                <View style={[styles.actionCardIcon, { backgroundColor: iconColors.profile }]}>
                   <Text style={styles.actionCardEmoji}>👤</Text>
                 </View>
                 <Text style={styles.actionCardTitle}>{t('editProfile')}</Text>
@@ -122,7 +130,7 @@ export default function HomeScreen({ navigation }) {
                 end={{ x: 1, y: 1 }}
                 style={styles.actionCardGradient}
               >
-                <View style={[styles.actionCardIcon, { backgroundColor: isDarkMode ? 'rgba(255, 159, 10, 0.2)' : 'rgba(255, 149, 0, 0.15)' }]}>
+                <View style={[styles.actionCardIcon, { backgroundColor: iconColors.settings }]}>
                   <Text style={styles.actionCardEmoji}>⚙️</Text>
                 </View>
                 <Text style={styles.actionCardTitle}>{t('settings')}</Text>
@@ -140,7 +148,7 @@ export default function HomeScreen({ navigation }) {
                 end={{ x: 1, y: 1 }}
                 style={styles.actionCardGradient}
               >
-                <View style={[styles.actionCardIcon, { backgroundColor: isDarkMode ? 'rgba(191, 90, 242, 0.2)' : 'rgba(175, 82, 222, 0.15)' }]}>
+                <View style={[styles.actionCardIcon, { backgroundColor: iconColors.nfc }]}>
                   <Text style={styles.actionCardEmoji}>📱</Text>
                 </View>
                 <Text style={styles.actionCardTitle}>{t('startSharing')}</Text>
