@@ -9,6 +9,7 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import NfcManager, { NfcTech, Ndef } from 'react-native-nfc-manager';
 import * as Clipboard from 'expo-clipboard';
 import { lightColors, darkColors } from '../theme';
@@ -188,15 +189,23 @@ export default function NFCShareScreen({ navigation, route }) {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.backButtonText}>← {t('back')}</Text>
-          </TouchableOpacity>
-          <Text style={styles.title}>{t('shareProfileNFC')}</Text>
-        </View>
+        {/* Header with Gradient Background */}
+        <LinearGradient
+          colors={isDarkMode ? ['#0A84FF', '#0051D5', '#003DA5'] : ['#007AFF', '#0051D5', '#003DA5']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.headerGradient}
+        >
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Text style={styles.backButtonText}>← {t('back')}</Text>
+            </TouchableOpacity>
+            <Text style={styles.title}>{t('shareProfileNFC')}</Text>
+          </View>
+        </LinearGradient>
 
         {!nfcSupported && (
           <View style={styles.warningBox}>
@@ -319,29 +328,38 @@ const getStyles = (colors) =>
       backgroundColor: colors.background,
     },
     content: {
-      padding: 20,
-      paddingTop: Platform.OS === 'ios' ? 50 : 20,
+      paddingBottom: 32,
+    },
+    headerGradient: {
+      borderBottomLeftRadius: 32,
+      borderBottomRightRadius: 32,
     },
     header: {
-      marginBottom: 20,
+      padding: 20,
+      paddingTop: Platform.OS === 'ios' ? 60 : 40,
+      paddingBottom: 32,
     },
     backButton: {
       marginBottom: 10,
     },
     backButtonText: {
-      color: colors.primary,
+      color: '#fff',
       fontSize: 16,
+      fontWeight: '600',
+      opacity: 0.95,
     },
     title: {
       fontSize: 28,
       fontWeight: 'bold',
-      color: colors.text,
+      color: '#fff',
       marginBottom: 10,
     },
     warningBox: {
       backgroundColor: colors.warning || '#FFA500',
       padding: 15,
       borderRadius: 10,
+      marginHorizontal: 20,
+      marginTop: 20,
       marginBottom: 20,
     },
     warningText: {
@@ -351,6 +369,7 @@ const getStyles = (colors) =>
     },
     section: {
       marginBottom: 30,
+      marginHorizontal: 20,
     },
     sectionTitle: {
       fontSize: 20,

@@ -8,6 +8,7 @@ import {
   Platform,
   Switch,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { lightColors, darkColors } from '../theme';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -26,16 +27,23 @@ export default function SettingsScreen({ navigation }) {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.backButtonText}>← {t('back')}</Text>
-          </TouchableOpacity>
-          <Text style={styles.title}>{t('settingsTitle')}</Text>
-        </View>
+        {/* Header with Gradient Background */}
+        <LinearGradient
+          colors={isDarkMode ? ['#0A84FF', '#0051D5', '#003DA5'] : ['#007AFF', '#0051D5', '#003DA5']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.headerGradient}
+        >
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Text style={styles.backButtonText}>← {t('back')}</Text>
+            </TouchableOpacity>
+            <Text style={styles.title}>{t('settingsTitle')}</Text>
+          </View>
+        </LinearGradient>
 
         {/* Theme Section */}
         <View style={styles.section}>
@@ -142,25 +150,28 @@ const getStyles = (colors) => StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
   },
+  headerGradient: {
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+  },
   header: {
     padding: 16,
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    paddingBottom: 32,
   },
   backButton: {
     marginBottom: 8,
   },
   backButtonText: {
-    color: colors.primary,
+    color: '#fff',
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '600',
+    opacity: 0.95,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: colors.text,
+    color: '#fff',
   },
   section: {
     padding: 16,

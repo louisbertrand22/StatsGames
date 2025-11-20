@@ -9,6 +9,7 @@ import {
   Platform,
   TouchableOpacity,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { lightColors, darkColors } from '../theme';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -112,17 +113,25 @@ export default function NFCProfileScreen({ route, navigation }) {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        <View style={styles.header}>
-          {navigation && (
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}
-            >
-              <Text style={styles.backButtonText}>← {t('back')}</Text>
-            </TouchableOpacity>
-          )}
-          <Text style={styles.headerTitle}>{t('sharedProfile')}</Text>
-        </View>
+        {/* Header with Gradient Background */}
+        <LinearGradient
+          colors={isDarkMode ? ['#0A84FF', '#0051D5', '#003DA5'] : ['#007AFF', '#0051D5', '#003DA5']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.headerGradient}
+        >
+          <View style={styles.header}>
+            {navigation && (
+              <TouchableOpacity
+                style={styles.backButton}
+                onPress={() => navigation.goBack()}
+              >
+                <Text style={styles.backButtonText}>← {t('back')}</Text>
+              </TouchableOpacity>
+            )}
+            <Text style={styles.headerTitle}>{t('sharedProfile')}</Text>
+          </View>
+        </LinearGradient>
 
         <View style={styles.profileCard}>
           <View style={styles.avatarContainer}>
@@ -219,29 +228,38 @@ const getStyles = (colors) =>
       alignItems: 'center',
     },
     content: {
-      padding: 20,
-      paddingTop: Platform.OS === 'ios' ? 50 : 20,
+      paddingBottom: 32,
+    },
+    headerGradient: {
+      borderBottomLeftRadius: 32,
+      borderBottomRightRadius: 32,
     },
     header: {
-      marginBottom: 20,
+      padding: 20,
+      paddingTop: Platform.OS === 'ios' ? 60 : 40,
+      paddingBottom: 32,
     },
     backButton: {
       marginBottom: 10,
     },
     backButtonText: {
-      color: colors.primary,
+      color: '#fff',
       fontSize: 16,
+      fontWeight: '600',
+      opacity: 0.95,
     },
     headerTitle: {
       fontSize: 28,
       fontWeight: 'bold',
-      color: colors.text,
+      color: '#fff',
     },
     profileCard: {
       backgroundColor: colors.surface || colors.card,
       borderRadius: 15,
       padding: 20,
       alignItems: 'center',
+      marginHorizontal: 20,
+      marginTop: 20,
       marginBottom: 20,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
@@ -293,6 +311,7 @@ const getStyles = (colors) =>
     },
     section: {
       marginBottom: 20,
+      marginHorizontal: 20,
     },
     sectionTitle: {
       fontSize: 20,

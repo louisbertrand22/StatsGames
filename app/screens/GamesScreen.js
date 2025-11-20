@@ -10,6 +10,7 @@ import {
   Platform,
   Image,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { lightColors, darkColors } from '../theme';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -152,19 +153,26 @@ export default function GamesScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backButtonText}>← {t('back')}</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>Available Games</Text>
-        <Text style={styles.subtitle}>
-          Link games to your profile to share your stats
-        </Text>
-      </View>
+      {/* Header with Gradient Background */}
+      <LinearGradient
+        colors={isDarkMode ? ['#0A84FF', '#0051D5', '#003DA5'] : ['#007AFF', '#0051D5', '#003DA5']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.headerGradient}
+      >
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.backButtonText}>← {t('back')}</Text>
+          </TouchableOpacity>
+          <Text style={styles.title}>Available Games</Text>
+          <Text style={styles.subtitle}>
+            Link games to your profile to share your stats
+          </Text>
+        </View>
+      </LinearGradient>
 
       {/* Content */}
       <ScrollView 
@@ -204,31 +212,35 @@ const getStyles = (colors) => StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  headerGradient: {
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+  },
   header: {
     padding: 16,
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    paddingBottom: 32,
   },
   backButton: {
     marginBottom: 8,
   },
   backButtonText: {
-    color: colors.primary,
+    color: '#fff',
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '600',
+    opacity: 0.95,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: colors.text,
+    color: '#fff',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: '#fff',
     lineHeight: 20,
+    opacity: 0.9,
   },
   content: {
     flex: 1,
