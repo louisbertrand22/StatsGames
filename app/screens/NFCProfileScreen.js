@@ -21,6 +21,7 @@ export default function NFCProfileScreen({ route, navigation }) {
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState(null);
   const [error, setError] = useState(null);
+  const [errorType, setErrorType] = useState(null); // 'expired', 'invalid', or 'other'
 
   // Get colors based on theme
   const colors = isDarkMode ? darkColors : lightColors;
@@ -31,6 +32,7 @@ export default function NFCProfileScreen({ route, navigation }) {
       loadProfile();
     } else {
       setError(t('noTokenProvided'));
+      setErrorType('other');
       setLoading(false);
     }
   }, [token]);
@@ -38,6 +40,7 @@ export default function NFCProfileScreen({ route, navigation }) {
   const loadProfile = async () => {
     setLoading(true);
     setError(null);
+    setErrorType(null);
 
     try {
       const result = await getProfileByToken(token);
@@ -45,10 +48,13 @@ export default function NFCProfileScreen({ route, navigation }) {
       if (result.error) {
         if (result.error.message === 'Token expired') {
           setError(t('linkExpired'));
+          setErrorType('expired');
         } else if (result.error.message === 'Token not found') {
           setError(t('invalidLink'));
+          setErrorType('invalid');
         } else {
           setError(t('failedToLoadProfile'));
+          setErrorType('other');
         }
       } else {
         setProfileData(result);
@@ -56,6 +62,7 @@ export default function NFCProfileScreen({ route, navigation }) {
     } catch (err) {
       console.error('Error loading profile:', err);
       setError(t('unexpectedError'));
+      setErrorType('other');
     } finally {
       setLoading(false);
     }
@@ -76,7 +83,7 @@ export default function NFCProfileScreen({ route, navigation }) {
         <Text style={styles.errorIcon}>❌</Text>
         <Text style={styles.errorTitle}>{error}</Text>
         <Text style={styles.errorText}>
-          {error.includes(t('linkExpired').substring(0, 10))
+          {errorType === 'expired'
             ? t('askForNewLink')
             : t('checkLinkAndRetry')}
         </Text>
