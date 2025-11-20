@@ -138,6 +138,8 @@ const translations = {
     expired: 'Expired',
     imageSelected: 'Image Selected',
     profilePictureUploadPending: 'Profile picture upload to server will be implemented soon. For now, the image is stored locally.',
+    failedToUploadProfilePicture: 'Failed to upload profile picture',
+    profilePictureUpdated: 'Profile picture updated!',
   },
   fr: {
     // Home Screen
@@ -272,6 +274,8 @@ const translations = {
     expired: 'Expiré',
     imageSelected: 'Image sélectionnée',
     profilePictureUploadPending: 'Le téléchargement de la photo de profil sur le serveur sera bientôt disponible. Pour l\'instant, l\'image est stockée localement.',
+    failedToUploadProfilePicture: 'Échec du téléchargement de la photo de profil',
+    profilePictureUpdated: 'Photo de profil mise à jour !',
   },
 };
 

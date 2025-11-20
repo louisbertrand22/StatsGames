@@ -124,9 +124,9 @@ export default function ProfileScreen({ navigation }) {
       // TODO: Implement actual upload to Supabase Storage
       // const { error } = await updateProfilePicture(imageUri);
       // if (error) {
-      //   Alert.alert(t('error'), 'Failed to upload profile picture');
+      //   Alert.alert(t('error'), t('failedToUploadProfilePicture'));
       // } else {
-      //   Alert.alert(t('success'), 'Profile picture updated!');
+      //   Alert.alert(t('success'), t('profilePictureUpdated'));
       // }
     }
   };
