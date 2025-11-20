@@ -11,11 +11,13 @@ import {
 } from 'react-native';
 import { lightColors, darkColors } from '../theme';
 import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { getProfileByToken } from '../services/nfc';
 
 export default function NFCProfileScreen({ route, navigation }) {
   const { token } = route.params || {};
   const { isDarkMode } = useTheme();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState(null);
   const [error, setError] = useState(null);
@@ -42,18 +44,18 @@ export default function NFCProfileScreen({ route, navigation }) {
 
       if (result.error) {
         if (result.error.message === 'Token expired') {
-          setError('This sharing link has expired');
+          setError(t('linkExpired'));
         } else if (result.error.message === 'Token not found') {
-          setError('Invalid sharing link');
+          setError(t('invalidLink'));
         } else {
-          setError('Failed to load profile');
+          setError(t('failedToLoadProfile'));
         }
       } else {
         setProfileData(result);
       }
     } catch (err) {
       console.error('Error loading profile:', err);
-      setError('An unexpected error occurred');
+      setError(t('unexpectedError'));
     } finally {
       setLoading(false);
     }
@@ -63,7 +65,7 @@ export default function NFCProfileScreen({ route, navigation }) {
     return (
       <View style={[styles.container, styles.centered]}>
         <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={[styles.text, { marginTop: 20 }]}>Loading profile...</Text>
+        <Text style={[styles.text, { marginTop: 20 }]}>{t('loadingProfile')}</Text>
       </View>
     );
   }
@@ -74,16 +76,16 @@ export default function NFCProfileScreen({ route, navigation }) {
         <Text style={styles.errorIcon}>❌</Text>
         <Text style={styles.errorTitle}>{error}</Text>
         <Text style={styles.errorText}>
-          {error.includes('expired')
-            ? 'Please ask the user to generate a new sharing link'
-            : 'Please check the link and try again'}
+          {error.includes(t('linkExpired').substring(0, 10))
+            ? t('askForNewLink')
+            : t('checkLinkAndRetry')}
         </Text>
         {navigation && (
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.goBack()}
           >
-            <Text style={styles.buttonText}>Go Back</Text>
+            <Text style={styles.buttonText}>{t('goBack')}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -93,7 +95,7 @@ export default function NFCProfileScreen({ route, navigation }) {
   if (!profileData?.user) {
     return (
       <View style={[styles.container, styles.centered]}>
-        <Text style={styles.errorText}>No profile data available</Text>
+        <Text style={styles.errorText}>{t('noProfileData')}</Text>
       </View>
     );
   }
@@ -109,10 +111,10 @@ export default function NFCProfileScreen({ route, navigation }) {
               style={styles.backButton}
               onPress={() => navigation.goBack()}
             >
-              <Text style={styles.backButtonText}>← Back</Text>
+              <Text style={styles.backButtonText}>← {t('back')}</Text>
             </TouchableOpacity>
           )}
-          <Text style={styles.headerTitle}>Shared Profile</Text>
+          <Text style={styles.headerTitle}>{t('sharedProfile')}</Text>
         </View>
 
         <View style={styles.profileCard}>
@@ -129,11 +131,11 @@ export default function NFCProfileScreen({ route, navigation }) {
           </View>
 
           <Text style={styles.username}>
-            {user.username || 'Anonymous User'}
+            {user.username || t('anonymousUser')}
           </Text>
 
           <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>User ID:</Text>
+            <Text style={styles.infoLabel}>{t('userId')}:</Text>
             <Text style={styles.infoValue} numberOfLines={1}>
               {user.id.substring(0, 8)}...
             </Text>
@@ -141,7 +143,7 @@ export default function NFCProfileScreen({ route, navigation }) {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Game Statistics</Text>
+          <Text style={styles.sectionTitle}>{t('gameStatistics')}</Text>
           
           {stats && stats.length > 0 ? (
             stats.map((gameStat, index) => (
@@ -154,7 +156,7 @@ export default function NFCProfileScreen({ route, navigation }) {
                     />
                   )}
                   <Text style={styles.gameName}>
-                    {gameStat.games?.name || 'Unknown Game'}
+                    {gameStat.games?.name || t('unknownGame')}
                   </Text>
                 </View>
                 
@@ -169,13 +171,13 @@ export default function NFCProfileScreen({ route, navigation }) {
                       </View>
                     ))
                   ) : (
-                    <Text style={styles.noStatsText}>No stats available</Text>
+                    <Text style={styles.noStatsText}>{t('noStatsAvailable')}</Text>
                   )}
                 </View>
 
                 {gameStat.updated_at && (
                   <Text style={styles.updatedText}>
-                    Updated: {new Date(gameStat.updated_at).toLocaleDateString()}
+                    {t('updated')}: {new Date(gameStat.updated_at).toLocaleDateString()}
                   </Text>
                 )}
               </View>
@@ -183,7 +185,7 @@ export default function NFCProfileScreen({ route, navigation }) {
           ) : (
             <View style={styles.emptyState}>
               <Text style={styles.emptyStateText}>
-                No game statistics available yet
+                {t('noGameStatsYet')}
               </Text>
             </View>
           )}
@@ -191,7 +193,7 @@ export default function NFCProfileScreen({ route, navigation }) {
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            This profile was shared via NFC
+            {t('profileSharedViaNFC')}
           </Text>
         </View>
       </View>

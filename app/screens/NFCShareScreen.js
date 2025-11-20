@@ -193,15 +193,15 @@ export default function NFCShareScreen({ navigation, route }) {
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <Text style={styles.backButtonText}>← Back</Text>
+            <Text style={styles.backButtonText}>← {t('back')}</Text>
           </TouchableOpacity>
-          <Text style={styles.title}>Share Profile via NFC</Text>
+          <Text style={styles.title}>{t('shareProfileNFC')}</Text>
         </View>
 
         {!nfcSupported && (
           <View style={styles.warningBox}>
             <Text style={styles.warningText}>
-              ⚠️ NFC is not supported on this device. You can still share your profile using the link.
+              ⚠️ {t('nfcNotSupported')}
             </Text>
           </View>
         )}
@@ -209,26 +209,26 @@ export default function NFCShareScreen({ navigation, route }) {
         {nfcSupported && !nfcEnabled && (
           <View style={styles.warningBox}>
             <Text style={styles.warningText}>
-              ⚠️ NFC is disabled. Please enable it in your device settings to share via NFC.
+              ⚠️ {t('nfcDisabled')}
             </Text>
           </View>
         )}
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Profile Sharing</Text>
+          <Text style={styles.sectionTitle}>{t('profileSharing')}</Text>
           <Text style={styles.sectionDescription}>
-            Generate a temporary token to share your profile. The token expires after 15 minutes.
+            {t('tokenExpiresInfo')}
           </Text>
 
           {tokenData && (
             <View style={styles.tokenInfo}>
-              <Text style={styles.tokenLabel}>Active Token</Text>
+              <Text style={styles.tokenLabel}>{t('activeToken')}</Text>
               <Text style={styles.tokenValue} numberOfLines={1}>
                 {tokenData.token}
               </Text>
               {timeRemaining && (
                 <View style={styles.timerContainer}>
-                  <Text style={styles.timerLabel}>Time Remaining:</Text>
+                  <Text style={styles.timerLabel}>{t('timeRemaining')}:</Text>
                   <Text style={styles.timerValue}>{timeRemaining}</Text>
                 </View>
               )}
@@ -248,7 +248,7 @@ export default function NFCShareScreen({ navigation, route }) {
               <ActivityIndicator color="#fff" />
             ) : (
               <Text style={styles.buttonText}>
-                {tokenData ? 'Generate New Token' : 'Generate Token'}
+                {tokenData ? t('generateNewToken') : t('generateToken')}
               </Text>
             )}
           </TouchableOpacity>
@@ -257,7 +257,7 @@ export default function NFCShareScreen({ navigation, route }) {
         {tokenData && (
           <>
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Share Methods</Text>
+              <Text style={styles.sectionTitle}>{t('shareMethods')}</Text>
 
               {nfcSupported && nfcEnabled && (
                 <TouchableOpacity
@@ -269,11 +269,11 @@ export default function NFCShareScreen({ navigation, route }) {
                     <>
                       <ActivityIndicator color="#fff" size="small" />
                       <Text style={[styles.buttonText, { marginLeft: 10 }]}>
-                        Tap device to NFC tag...
+                        {t('tapDeviceToNFC')}
                       </Text>
                     </>
                   ) : (
-                    <Text style={styles.buttonText}>📱 Write to NFC Tag</Text>
+                    <Text style={styles.buttonText}>📱 {t('writeToNFCTag')}</Text>
                   )}
                 </TouchableOpacity>
               )}
@@ -282,12 +282,12 @@ export default function NFCShareScreen({ navigation, route }) {
                 style={[styles.button, styles.secondaryButton]}
                 onPress={handleCopyLink}
               >
-                <Text style={styles.buttonText}>📋 Copy Link</Text>
+                <Text style={styles.buttonText}>📋 {t('copyLink')}</Text>
               </TouchableOpacity>
             </View>
 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Share Link</Text>
+              <Text style={styles.sectionTitle}>{t('shareLink')}</Text>
               <View style={styles.linkBox}>
                 <Text style={styles.linkText} numberOfLines={2}>
                   {tokenData.url}
@@ -298,13 +298,13 @@ export default function NFCShareScreen({ navigation, route }) {
         )}
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>How it works</Text>
+          <Text style={styles.sectionTitle}>{t('howItWorks')}</Text>
           <Text style={styles.infoText}>
-            1. Generate a temporary sharing token{'\n'}
-            2. Either write the link to an NFC tag or copy the link{'\n'}
-            3. Share the NFC tag or link with others{'\n'}
-            4. They can view your public profile and stats{'\n'}
-            5. Token expires automatically after 15 minutes
+            {t('howItWorksStep1')}{'\n'}
+            {t('howItWorksStep2')}{'\n'}
+            {t('howItWorksStep3')}{'\n'}
+            {t('howItWorksStep4')}{'\n'}
+            {t('howItWorksStep5')}
           </Text>
         </View>
       </View>
