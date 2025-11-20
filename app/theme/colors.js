@@ -4,6 +4,7 @@ export const lightColors = {
   primary: '#007AFF',
   primaryLight: '#5AC8FA',
   primaryDark: '#0051D5',
+  primaryAlpha: 'rgba(0, 122, 255, 0.12)',
   secondary: '#6B7280',
   
   // Neutral colors
@@ -31,6 +32,7 @@ export const darkColors = {
   primary: '#0A84FF',
   primaryLight: '#64D2FF',
   primaryDark: '#0051D5',
+  primaryAlpha: 'rgba(10, 132, 255, 0.12)',
   secondary: '#9CA3AF',
   
   // Neutral colors
