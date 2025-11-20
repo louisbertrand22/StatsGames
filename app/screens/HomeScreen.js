@@ -205,7 +205,7 @@ const getStyles = (colors) => StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: colors.primary + '20',
+    backgroundColor: colors.primaryAlpha,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,

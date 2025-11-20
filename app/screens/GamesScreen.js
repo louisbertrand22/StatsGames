@@ -79,9 +79,14 @@ export default function GamesScreen({ navigation }) {
       // Link the game
       result = await linkGameToUser(user.id, game.id);
       if (!result.error) {
-        // Reload user games to get the complete data
-        const { data: updatedUserGames } = await fetchUserGames(user.id);
-        setUserGames(updatedUserGames || []);
+        // Optimistically add the game to the state
+        const newUserGame = {
+          id: result.data.id,
+          game_id: game.id,
+          installed_at: result.data.installed_at,
+          games: game,
+        };
+        setUserGames(prev => [...prev, newUserGame]);
         Alert.alert('Success', `${game.name} has been added to your profile`);
       }
     }
@@ -327,7 +332,7 @@ const getStyles = (colors) => StyleSheet.create({
   },
   linkedBadge: {
     marginTop: 4,
-    backgroundColor: colors.primary + '20',
+    backgroundColor: colors.primaryAlpha,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 4,

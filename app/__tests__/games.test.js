@@ -200,48 +200,4 @@ describe('Games Service', () => {
       expect(result.error).toBeDefined();
     });
   });
-
-  describe('isGameLinked', () => {
-    it('should return true when game is linked', async () => {
-      mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              single: jest.fn().mockResolvedValue({
-                data: { id: 'ug-1' },
-                error: null,
-              }),
-            }),
-          }),
-        }),
-      });
-
-      const { isGameLinked } = await import('../services/games');
-      const result = await isGameLinked('user-123', 'game-1');
-
-      expect(result.isLinked).toBe(true);
-      expect(result.error).toBeNull();
-    });
-
-    it('should return false when game is not linked', async () => {
-      mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              single: jest.fn().mockResolvedValue({
-                data: null,
-                error: { code: 'PGRST116' }, // Not found error
-              }),
-            }),
-          }),
-        }),
-      });
-
-      const { isGameLinked } = await import('../services/games');
-      const result = await isGameLinked('user-123', 'game-1');
-
-      expect(result.isLinked).toBe(false);
-      expect(result.error).toBeNull();
-    });
-  });
 });

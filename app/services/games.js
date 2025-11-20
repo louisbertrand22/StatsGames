@@ -115,29 +115,4 @@ export const unlinkGameFromUser = async (userId, gameId) => {
   }
 };
 
-/**
- * Check if a game is linked to user's profile
- * @param {string} userId - The user ID
- * @param {string} gameId - The game ID
- * @returns {Promise<{isLinked: boolean, error?: any}>}
- */
-export const isGameLinked = async (userId, gameId) => {
-  try {
-    const { data, error } = await supabase
-      .from('user_games')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('game_id', gameId)
-      .single();
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 is "not found" error
-      console.error('Error checking if game is linked:', error);
-      return { isLinked: false, error };
-    }
-
-    return { isLinked: !!data, error: null };
-  } catch (error) {
-    console.error('Error checking if game is linked:', error);
-    return { isLinked: false, error };
-  }
-};
