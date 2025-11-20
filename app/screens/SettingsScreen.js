@@ -29,7 +29,7 @@ export default function SettingsScreen({ navigation }) {
       >
         {/* Header with Gradient Background */}
         <LinearGradient
-          colors={isDarkMode ? ['#0A84FF', '#0051D5', '#003DA5'] : ['#007AFF', '#0051D5', '#003DA5']}
+          colors={isDarkMode ? ['#8B4513', '#654321', '#4A2511'] : ['#A0522D', '#654321', '#4A2511']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.headerGradient}

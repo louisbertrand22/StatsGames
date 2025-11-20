@@ -143,7 +143,7 @@ export default function ProfileScreen({ navigation }) {
       >
         {/* Header with Gradient Background */}
         <LinearGradient
-          colors={isDarkMode ? ['#0A84FF', '#0051D5', '#003DA5'] : ['#007AFF', '#0051D5', '#003DA5']}
+          colors={isDarkMode ? ['#30D158', '#34C759', '#28A745'] : ['#34C759', '#28A745', '#218838']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.headerGradient}
