@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { colors, textStyles } from '../theme';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -21,10 +22,11 @@ export default function LoginScreen() {
   const [useMagicLink, setUseMagicLink] = useState(false);
   const [localLoading, setLocalLoading] = useState(false);
   const { signIn, signUp, sendMagicLink } = useAuth();
+  const { t } = useLanguage();
 
   const handleAuth = async () => {
     if (!email.trim()) {
-      Alert.alert('Error', 'Please enter your email');
+      Alert.alert(t('error'), t('pleaseEnterEmail'));
       return;
     }
 
@@ -34,11 +36,11 @@ export default function LoginScreen() {
       setLocalLoading(false);
 
       if (error) {
-        Alert.alert('Error', error.message);
+        Alert.alert(t('error'), error.message);
       } else {
         Alert.alert(
-          'Check your email',
-          'We sent you a magic link to sign in.'
+          t('checkYourEmail'),
+          t('magicLinkSent')
         );
         setEmail('');
       }
@@ -46,7 +48,7 @@ export default function LoginScreen() {
     }
 
     if (!password.trim()) {
-      Alert.alert('Error', 'Please enter your password');
+      Alert.alert(t('error'), t('pleaseEnterPassword'));
       return;
     }
 
@@ -57,11 +59,11 @@ export default function LoginScreen() {
     setLocalLoading(false);
 
     if (error) {
-      Alert.alert('Error', error.message);
+      Alert.alert(t('error'), error.message);
     } else if (isSignUp) {
       Alert.alert(
-        'Success',
-        'Account created! Please check your email to verify your account.'
+        t('success'),
+        t('accountCreated')
       );
     }
   };
@@ -86,17 +88,17 @@ export default function LoginScreen() {
         keyboardShouldPersistTaps="always"
       >
         <View style={styles.content}>
-          <Text style={styles.logo}>StatsGames</Text>
-          <Text style={styles.subtitle}>Game Statistics with NFC</Text>
+          <Text style={styles.logo}>{t('appName')}</Text>
+          <Text style={styles.subtitle}>{t('gameStatisticsWithNFC')}</Text>
 
           <View style={styles.form}>
             <Text style={styles.title}>
-              {isSignUp ? 'Create Account' : 'Welcome Back'}
+              {isSignUp ? t('createAccount') : t('welcomeBack')}
             </Text>
 
             <TextInput
               style={styles.input}
-              placeholder="Email"
+              placeholder={t('emailPlaceholder')}
               placeholderTextColor={colors.textSecondary}
               value={email}
               onChangeText={setEmail}
@@ -108,7 +110,7 @@ export default function LoginScreen() {
             {!useMagicLink && (
               <TextInput
                 style={styles.input}
-                placeholder="Password"
+                placeholder={t('passwordPlaceholder')}
                 placeholderTextColor={colors.textSecondary}
                 value={password}
                 onChangeText={setPassword}
@@ -128,10 +130,10 @@ export default function LoginScreen() {
               ) : (
                 <Text style={styles.primaryButtonText}>
                   {useMagicLink
-                    ? 'Send Magic Link'
+                    ? t('sendMagicLink')
                     : isSignUp
-                    ? 'Sign Up'
-                    : 'Sign In'}
+                    ? t('signUp')
+                    : t('signIn')}
                 </Text>
               )}
             </TouchableOpacity>
@@ -143,14 +145,14 @@ export default function LoginScreen() {
             >
               <Text style={styles.secondaryButtonText}>
                 {useMagicLink
-                  ? 'Use password instead'
-                  : 'Use magic link instead'}
+                  ? t('usePasswordInstead')
+                  : t('useMagicLinkInstead')}
               </Text>
             </TouchableOpacity>
 
             <View style={styles.divider}>
               <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>or</Text>
+              <Text style={styles.dividerText}>{t('or')}</Text>
               <View style={styles.dividerLine} />
             </View>
 
@@ -161,8 +163,8 @@ export default function LoginScreen() {
             >
               <Text style={styles.secondaryButtonText}>
                 {isSignUp
-                  ? 'Already have an account? Sign In'
-                  : "Don't have an account? Sign Up"}
+                  ? t('alreadyHaveAccount')
+                  : t('dontHaveAccount')}
               </Text>
             </TouchableOpacity>
           </View>

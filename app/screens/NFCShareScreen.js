@@ -50,7 +50,7 @@ export default function NFCShareScreen({ navigation, route }) {
         const diff = expiresAt - now;
 
         if (diff <= 0) {
-          setTimeRemaining('Expired');
+          setTimeRemaining(t('expired'));
           setTokenData(null);
           clearInterval(interval);
         } else {
@@ -82,7 +82,7 @@ export default function NFCShareScreen({ navigation, route }) {
 
   const handleGenerateToken = async () => {
     if (!user) {
-      Alert.alert('Error', 'You must be logged in to share your profile');
+      Alert.alert(t('error'), t('mustBeLoggedIn'));
       return;
     }
 
@@ -95,19 +95,19 @@ export default function NFCShareScreen({ navigation, route }) {
       const result = await createNFCToken(user.id, 15);
 
       if (result.error) {
-        Alert.alert('Error', 'Failed to generate token. Please try again.');
+        Alert.alert(t('error'), t('failedToGenerateToken'));
         console.error('Token generation error:', result.error);
       } else {
         setTokenData(result);
         Alert.alert(
-          'Success',
+          t('success'),
           nfcSupported && nfcEnabled
-            ? 'Token generated! You can now tap your device to another device to share your profile.'
-            : 'Token generated! Use the "Copy Link" button to share your profile.'
+            ? t('tokenGeneratedNFC')
+            : t('tokenGeneratedLink')
         );
       }
     } catch (error) {
-      Alert.alert('Error', 'An unexpected error occurred');
+      Alert.alert(t('error'), t('unexpectedError'));
       console.error('Error generating token:', error);
     } finally {
       setLoading(false);
@@ -116,17 +116,17 @@ export default function NFCShareScreen({ navigation, route }) {
 
   const writeNFC = async () => {
     if (!tokenData) {
-      Alert.alert('Error', 'Please generate a token first');
+      Alert.alert(t('error'), t('pleaseGenerateTokenFirst'));
       return;
     }
 
     if (!nfcSupported) {
-      Alert.alert('NFC Not Supported', 'Your device does not support NFC');
+      Alert.alert(t('nfcNotSupportedTitle'), t('nfcNotSupportedMessage'));
       return;
     }
 
     if (!nfcEnabled) {
-      Alert.alert('NFC Disabled', 'Please enable NFC in your device settings');
+      Alert.alert(t('nfcDisabledTitle'), t('nfcDisabledMessage'));
       return;
     }
 
@@ -140,14 +140,14 @@ export default function NFCShareScreen({ navigation, route }) {
 
       if (bytes) {
         await NfcManager.ndefHandler.writeNdefMessage(bytes);
-        Alert.alert('Success', 'Profile link written to NFC tag!');
+        Alert.alert(t('success'), t('profileLinkWritten'));
       }
     } catch (error) {
       console.warn('NFC write error:', error);
       if (error.toString().includes('cancelled') || error.toString().includes('canceled')) {
         // User cancelled, no need to show error
       } else {
-        Alert.alert('Error', 'Failed to write to NFC tag. Please try again.');
+        Alert.alert(t('error'), t('failedToWriteNFC'));
       }
     } finally {
       setIsWriting(false);
@@ -157,15 +157,15 @@ export default function NFCShareScreen({ navigation, route }) {
 
   const handleCopyLink = async () => {
     if (!tokenData) {
-      Alert.alert('Error', 'Please generate a token first');
+      Alert.alert(t('error'), t('pleaseGenerateTokenFirst'));
       return;
     }
 
     try {
       await Clipboard.setStringAsync(tokenData.url);
-      Alert.alert('Success', 'Link copied to clipboard!');
+      Alert.alert(t('success'), t('linkCopied'));
     } catch (error) {
-      Alert.alert('Error', 'Failed to copy link');
+      Alert.alert(t('error'), t('failedToCopyLink'));
       console.error('Clipboard error:', error);
     }
   };
@@ -193,15 +193,15 @@ export default function NFCShareScreen({ navigation, route }) {
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <Text style={styles.backButtonText}>← Back</Text>
+            <Text style={styles.backButtonText}>← {t('back')}</Text>
           </TouchableOpacity>
-          <Text style={styles.title}>Share Profile via NFC</Text>
+          <Text style={styles.title}>{t('shareProfileNFC')}</Text>
         </View>
 
         {!nfcSupported && (
           <View style={styles.warningBox}>
             <Text style={styles.warningText}>
-              ⚠️ NFC is not supported on this device. You can still share your profile using the link.
+              ⚠️ {t('nfcNotSupported')}
             </Text>
           </View>
         )}
@@ -209,26 +209,26 @@ export default function NFCShareScreen({ navigation, route }) {
         {nfcSupported && !nfcEnabled && (
           <View style={styles.warningBox}>
             <Text style={styles.warningText}>
-              ⚠️ NFC is disabled. Please enable it in your device settings to share via NFC.
+              ⚠️ {t('nfcDisabled')}
             </Text>
           </View>
         )}
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Profile Sharing</Text>
+          <Text style={styles.sectionTitle}>{t('profileSharing')}</Text>
           <Text style={styles.sectionDescription}>
-            Generate a temporary token to share your profile. The token expires after 15 minutes.
+            {t('tokenExpiresInfo')}
           </Text>
 
           {tokenData && (
             <View style={styles.tokenInfo}>
-              <Text style={styles.tokenLabel}>Active Token</Text>
+              <Text style={styles.tokenLabel}>{t('activeToken')}</Text>
               <Text style={styles.tokenValue} numberOfLines={1}>
                 {tokenData.token}
               </Text>
               {timeRemaining && (
                 <View style={styles.timerContainer}>
-                  <Text style={styles.timerLabel}>Time Remaining:</Text>
+                  <Text style={styles.timerLabel}>{t('timeRemaining')}:</Text>
                   <Text style={styles.timerValue}>{timeRemaining}</Text>
                 </View>
               )}
@@ -248,7 +248,7 @@ export default function NFCShareScreen({ navigation, route }) {
               <ActivityIndicator color="#fff" />
             ) : (
               <Text style={styles.buttonText}>
-                {tokenData ? 'Generate New Token' : 'Generate Token'}
+                {tokenData ? t('generateNewToken') : t('generateToken')}
               </Text>
             )}
           </TouchableOpacity>
@@ -257,7 +257,7 @@ export default function NFCShareScreen({ navigation, route }) {
         {tokenData && (
           <>
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Share Methods</Text>
+              <Text style={styles.sectionTitle}>{t('shareMethods')}</Text>
 
               {nfcSupported && nfcEnabled && (
                 <TouchableOpacity
@@ -269,11 +269,11 @@ export default function NFCShareScreen({ navigation, route }) {
                     <>
                       <ActivityIndicator color="#fff" size="small" />
                       <Text style={[styles.buttonText, { marginLeft: 10 }]}>
-                        Tap device to NFC tag...
+                        {t('tapDeviceToNFC')}
                       </Text>
                     </>
                   ) : (
-                    <Text style={styles.buttonText}>📱 Write to NFC Tag</Text>
+                    <Text style={styles.buttonText}>📱 {t('writeToNFCTag')}</Text>
                   )}
                 </TouchableOpacity>
               )}
@@ -282,12 +282,12 @@ export default function NFCShareScreen({ navigation, route }) {
                 style={[styles.button, styles.secondaryButton]}
                 onPress={handleCopyLink}
               >
-                <Text style={styles.buttonText}>📋 Copy Link</Text>
+                <Text style={styles.buttonText}>📋 {t('copyLink')}</Text>
               </TouchableOpacity>
             </View>
 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Share Link</Text>
+              <Text style={styles.sectionTitle}>{t('shareLink')}</Text>
               <View style={styles.linkBox}>
                 <Text style={styles.linkText} numberOfLines={2}>
                   {tokenData.url}
@@ -298,13 +298,13 @@ export default function NFCShareScreen({ navigation, route }) {
         )}
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>How it works</Text>
+          <Text style={styles.sectionTitle}>{t('howItWorks')}</Text>
           <Text style={styles.infoText}>
-            1. Generate a temporary sharing token{'\n'}
-            2. Either write the link to an NFC tag or copy the link{'\n'}
-            3. Share the NFC tag or link with others{'\n'}
-            4. They can view your public profile and stats{'\n'}
-            5. Token expires automatically after 15 minutes
+            {t('howItWorksStep1')}{'\n'}
+            {t('howItWorksStep2')}{'\n'}
+            {t('howItWorksStep3')}{'\n'}
+            {t('howItWorksStep4')}{'\n'}
+            {t('howItWorksStep5')}
           </Text>
         </View>
       </View>

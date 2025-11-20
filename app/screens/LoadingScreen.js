@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { colors, textStyles, containerStyles } from '../theme';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function LoadingScreen({ navigation }) {
+  const { t } = useLanguage();
+  
   useEffect(() => {
     // Simulate loading time, then navigate to Home
     const timer = setTimeout(() => {
@@ -14,8 +17,8 @@ export default function LoadingScreen({ navigation }) {
 
   return (
     <View >
-      <Text style={styles.logo}>StatsGames</Text>
-      <Text style={styles.subtitle}>Game Statistics with NFC</Text>
+      <Text style={styles.logo}>{t('appName')}</Text>
+      <Text style={styles.subtitle}>{t('gameStatisticsWithNFC')}</Text>
       <ActivityIndicator 
         size="large" 
         color={colors.primary} 

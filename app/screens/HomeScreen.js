@@ -40,7 +40,7 @@ export default function HomeScreen({ navigation }) {
 
       {/* Welcome Card */}
       <View style={styles.welcomeCard}>
-        <Text style={styles.logo}>StatsGames</Text>
+        <Text style={styles.logo}>{t('appName')}</Text>
         <Text style={styles.description}>
           {t('welcomeMessage')}
         </Text>
@@ -57,7 +57,7 @@ export default function HomeScreen({ navigation }) {
               <Text style={styles.actionCardEmoji}>👤</Text>
             </View>
             <Text style={styles.actionCardTitle}>{t('editProfile')}</Text>
-            <Text style={styles.actionCardDescription}>Update your profile information</Text>
+            <Text style={styles.actionCardDescription}>{t('updateProfileInfo')}</Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
@@ -68,7 +68,7 @@ export default function HomeScreen({ navigation }) {
               <Text style={styles.actionCardEmoji}>⚙️</Text>
             </View>
             <Text style={styles.actionCardTitle}>{t('settings')}</Text>
-            <Text style={styles.actionCardDescription}>Customize your preferences</Text>
+            <Text style={styles.actionCardDescription}>{t('customizePreferences')}</Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
@@ -78,8 +78,8 @@ export default function HomeScreen({ navigation }) {
             <View style={styles.actionCardIcon}>
               <Text style={styles.actionCardEmoji}>📱</Text>
             </View>
-            <Text style={styles.actionCardTitle}>Start Sharing</Text>
-            <Text style={styles.actionCardDescription}>Generate token and share your profile</Text>
+            <Text style={styles.actionCardTitle}>{t('startSharing')}</Text>
+            <Text style={styles.actionCardDescription}>{t('generateTokenShare')}</Text>
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
