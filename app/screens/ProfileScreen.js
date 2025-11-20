@@ -117,16 +117,16 @@ export default function ProfileScreen({ navigation }) {
       // Upload to Supabase would go here
       // For now, just update the local state
       Alert.alert(
-        'Image Selected', 
-        'Profile picture upload to server will be implemented soon. For now, the image is stored locally.'
+        t('imageSelected'), 
+        t('profilePictureUploadPending')
       );
       
       // TODO: Implement actual upload to Supabase Storage
       // const { error } = await updateProfilePicture(imageUri);
       // if (error) {
-      //   Alert.alert('Error', 'Failed to upload profile picture');
+      //   Alert.alert(t('error'), 'Failed to upload profile picture');
       // } else {
-      //   Alert.alert('Success', 'Profile picture updated!');
+      //   Alert.alert(t('success'), 'Profile picture updated!');
       // }
     }
   };

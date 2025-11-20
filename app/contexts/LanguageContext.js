@@ -136,6 +136,8 @@ const translations = {
     tokenGeneratedLink: 'Token generated! Use the "Copy Link" button to share your profile.',
     noTokenProvided: 'No token provided',
     expired: 'Expired',
+    imageSelected: 'Image Selected',
+    profilePictureUploadPending: 'Profile picture upload to server will be implemented soon. For now, the image is stored locally.',
   },
   fr: {
     // Home Screen
@@ -268,6 +270,8 @@ const translations = {
     tokenGeneratedLink: 'Jeton généré ! Utilisez le bouton "Copier le lien" pour partager votre profil.',
     noTokenProvided: 'Aucun jeton fourni',
     expired: 'Expiré',
+    imageSelected: 'Image sélectionnée',
+    profilePictureUploadPending: 'Le téléchargement de la photo de profil sur le serveur sera bientôt disponible. Pour l\'instant, l\'image est stockée localement.',
   },
 };
 
