@@ -12,6 +12,7 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
 import { lightColors, darkColors } from '../theme';
 import { useAuth } from '../contexts/AuthContext';
@@ -140,15 +141,23 @@ export default function ProfileScreen({ navigation }) {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.backButtonText}>← {t('back')}</Text>
-          </TouchableOpacity>
-          <Text style={styles.title}>{t('profileSettings')}</Text>
-        </View>
+        {/* Header with Gradient Background */}
+        <LinearGradient
+          colors={isDarkMode ? ['#0A84FF', '#0051D5', '#003DA5'] : ['#007AFF', '#0051D5', '#003DA5']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.headerGradient}
+        >
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Text style={styles.backButtonText}>← {t('back')}</Text>
+            </TouchableOpacity>
+            <Text style={styles.title}>{t('profileSettings')}</Text>
+          </View>
+        </LinearGradient>
 
         <View style={styles.content}>
           {/* User Info Section */}
@@ -258,25 +267,28 @@ const getStyles = (colors) => StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
   },
+  headerGradient: {
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+  },
   header: {
     padding: 16,
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    paddingBottom: 32,
   },
   backButton: {
     marginBottom: 8,
   },
   backButtonText: {
-    color: colors.primary,
+    color: '#fff',
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '600',
+    opacity: 0.95,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: colors.text,
+    color: '#fff',
   },
   content: {
     padding: 16,
