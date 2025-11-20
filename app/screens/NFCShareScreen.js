@@ -50,7 +50,7 @@ export default function NFCShareScreen({ navigation, route }) {
         const diff = expiresAt - now;
 
         if (diff <= 0) {
-          setTimeRemaining('Expired');
+          setTimeRemaining(t('expired'));
           setTokenData(null);
           clearInterval(interval);
         } else {
@@ -82,7 +82,7 @@ export default function NFCShareScreen({ navigation, route }) {
 
   const handleGenerateToken = async () => {
     if (!user) {
-      Alert.alert('Error', 'You must be logged in to share your profile');
+      Alert.alert(t('error'), t('mustBeLoggedIn'));
       return;
     }
 
@@ -95,19 +95,19 @@ export default function NFCShareScreen({ navigation, route }) {
       const result = await createNFCToken(user.id, 15);
 
       if (result.error) {
-        Alert.alert('Error', 'Failed to generate token. Please try again.');
+        Alert.alert(t('error'), t('failedToGenerateToken'));
         console.error('Token generation error:', result.error);
       } else {
         setTokenData(result);
         Alert.alert(
-          'Success',
+          t('success'),
           nfcSupported && nfcEnabled
-            ? 'Token generated! You can now tap your device to another device to share your profile.'
-            : 'Token generated! Use the "Copy Link" button to share your profile.'
+            ? t('tokenGeneratedNFC')
+            : t('tokenGeneratedLink')
         );
       }
     } catch (error) {
-      Alert.alert('Error', 'An unexpected error occurred');
+      Alert.alert(t('error'), t('unexpectedError'));
       console.error('Error generating token:', error);
     } finally {
       setLoading(false);
@@ -116,17 +116,17 @@ export default function NFCShareScreen({ navigation, route }) {
 
   const writeNFC = async () => {
     if (!tokenData) {
-      Alert.alert('Error', 'Please generate a token first');
+      Alert.alert(t('error'), t('pleaseGenerateTokenFirst'));
       return;
     }
 
     if (!nfcSupported) {
-      Alert.alert('NFC Not Supported', 'Your device does not support NFC');
+      Alert.alert(t('nfcNotSupportedTitle'), t('nfcNotSupportedMessage'));
       return;
     }
 
     if (!nfcEnabled) {
-      Alert.alert('NFC Disabled', 'Please enable NFC in your device settings');
+      Alert.alert(t('nfcDisabledTitle'), t('nfcDisabledMessage'));
       return;
     }
 
@@ -140,14 +140,14 @@ export default function NFCShareScreen({ navigation, route }) {
 
       if (bytes) {
         await NfcManager.ndefHandler.writeNdefMessage(bytes);
-        Alert.alert('Success', 'Profile link written to NFC tag!');
+        Alert.alert(t('success'), t('profileLinkWritten'));
       }
     } catch (error) {
       console.warn('NFC write error:', error);
       if (error.toString().includes('cancelled') || error.toString().includes('canceled')) {
         // User cancelled, no need to show error
       } else {
-        Alert.alert('Error', 'Failed to write to NFC tag. Please try again.');
+        Alert.alert(t('error'), t('failedToWriteNFC'));
       }
     } finally {
       setIsWriting(false);
@@ -157,15 +157,15 @@ export default function NFCShareScreen({ navigation, route }) {
 
   const handleCopyLink = async () => {
     if (!tokenData) {
-      Alert.alert('Error', 'Please generate a token first');
+      Alert.alert(t('error'), t('pleaseGenerateTokenFirst'));
       return;
     }
 
     try {
       await Clipboard.setStringAsync(tokenData.url);
-      Alert.alert('Success', 'Link copied to clipboard!');
+      Alert.alert(t('success'), t('linkCopied'));
     } catch (error) {
-      Alert.alert('Error', 'Failed to copy link');
+      Alert.alert(t('error'), t('failedToCopyLink'));
       console.error('Clipboard error:', error);
     }
   };

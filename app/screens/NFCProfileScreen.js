@@ -30,7 +30,7 @@ export default function NFCProfileScreen({ route, navigation }) {
     if (token) {
       loadProfile();
     } else {
-      setError('No token provided');
+      setError(t('noTokenProvided'));
       setLoading(false);
     }
   }, [token]);

@@ -26,7 +26,7 @@ export default function LoginScreen() {
 
   const handleAuth = async () => {
     if (!email.trim()) {
-      Alert.alert('Error', 'Please enter your email');
+      Alert.alert(t('error'), t('pleaseEnterEmail'));
       return;
     }
 
@@ -36,11 +36,11 @@ export default function LoginScreen() {
       setLocalLoading(false);
 
       if (error) {
-        Alert.alert('Error', error.message);
+        Alert.alert(t('error'), error.message);
       } else {
         Alert.alert(
-          'Check your email',
-          'We sent you a magic link to sign in.'
+          t('checkYourEmail'),
+          t('magicLinkSent')
         );
         setEmail('');
       }
@@ -48,7 +48,7 @@ export default function LoginScreen() {
     }
 
     if (!password.trim()) {
-      Alert.alert('Error', 'Please enter your password');
+      Alert.alert(t('error'), t('pleaseEnterPassword'));
       return;
     }
 
@@ -59,11 +59,11 @@ export default function LoginScreen() {
     setLocalLoading(false);
 
     if (error) {
-      Alert.alert('Error', error.message);
+      Alert.alert(t('error'), error.message);
     } else if (isSignUp) {
       Alert.alert(
-        'Success',
-        'Account created! Please check your email to verify your account.'
+        t('success'),
+        t('accountCreated')
       );
     }
   };
