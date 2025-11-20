@@ -155,7 +155,7 @@ export default function GamesScreen({ navigation }) {
     <View style={styles.container}>
       {/* Header with Gradient Background */}
       <LinearGradient
-        colors={isDarkMode ? ['#0A84FF', '#0051D5', '#003DA5'] : ['#007AFF', '#0051D5', '#003DA5']}
+        colors={colors.gradients.blue}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.headerGradient}
