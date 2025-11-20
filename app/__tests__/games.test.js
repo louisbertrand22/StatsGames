@@ -58,6 +58,60 @@ describe('Games Service', () => {
       expect(result.error).toBeNull();
     });
 
+    it('should fetch and handle Rocket League, Fortnite, and Clash Royale', async () => {
+      const mockGames = [
+        {
+          id: 'game-clash-royale',
+          name: 'Clash Royale',
+          slug: 'clash-royale',
+          icon_url: 'https://play-lh.googleusercontent.com/hB3mZJwn7qZBXyVPg2dKg-TadVPXUjqpJqXLm7HvX4qVH-pWVpNqh5N6tN1qX5nqZQ',
+          created_at: new Date().toISOString(),
+        },
+        {
+          id: 'game-fortnite',
+          name: 'Fortnite',
+          slug: 'fortnite',
+          icon_url: 'https://cdn2.unrealengine.com/Diesel%2Fproductv2%2Ffortnite%2Fhome%2FF_FortniteMainPromo_2560x1440-2560x1440-f2e7c6c3e5d6f5b5f5c1c5d5a5f5c5a5.jpg',
+          created_at: new Date().toISOString(),
+        },
+        {
+          id: 'game-rocket-league',
+          name: 'Rocket League',
+          slug: 'rocket-league',
+          icon_url: 'https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/252950/0a3a6e32594c9e93a5ca6437147c7836b4c0e73f.jpg',
+          created_at: new Date().toISOString(),
+        },
+      ];
+
+      mockSupabase.from.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          order: jest.fn().mockResolvedValue({
+            data: mockGames,
+            error: null,
+          }),
+        }),
+      });
+
+      const { fetchGames } = await import('../services/games');
+      const result = await fetchGames();
+
+      expect(result.data).toBeDefined();
+      expect(result.data.length).toBe(3);
+      expect(result.error).toBeNull();
+      
+      // Verify each game has the required fields
+      const gameNames = result.data.map(g => g.name);
+      expect(gameNames).toContain('Rocket League');
+      expect(gameNames).toContain('Fortnite');
+      expect(gameNames).toContain('Clash Royale');
+      
+      // Verify all games have slugs
+      result.data.forEach(game => {
+        expect(game.slug).toBeDefined();
+        expect(game.name).toBeDefined();
+      });
+    });
+
     it('should handle fetch errors gracefully', async () => {
       mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnValue({
@@ -140,6 +194,42 @@ describe('Games Service', () => {
       expect(result.data.user_id).toBe('user-123');
       expect(result.data.game_id).toBe('game-1');
       expect(result.error).toBeNull();
+    });
+
+    it('should link Rocket League, Fortnite, and Clash Royale to user', async () => {
+      const games = [
+        { id: 'game-rocket-league', name: 'Rocket League' },
+        { id: 'game-fortnite', name: 'Fortnite' },
+        { id: 'game-clash-royale', name: 'Clash Royale' },
+      ];
+
+      for (const game of games) {
+        const mockLinkData = {
+          id: `ug-${game.id}`,
+          user_id: 'user-123',
+          game_id: game.id,
+          installed_at: new Date().toISOString(),
+        };
+
+        mockSupabase.from.mockReturnValue({
+          insert: jest.fn().mockReturnValue({
+            select: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: mockLinkData,
+                error: null,
+              }),
+            }),
+          }),
+        });
+
+        const { linkGameToUser } = await import('../services/games');
+        const result = await linkGameToUser('user-123', game.id);
+
+        expect(result.data).toBeDefined();
+        expect(result.data.user_id).toBe('user-123');
+        expect(result.data.game_id).toBe(game.id);
+        expect(result.error).toBeNull();
+      }
     });
 
     it('should handle duplicate link errors', async () => {
