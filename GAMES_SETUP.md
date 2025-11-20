@@ -13,6 +13,8 @@ The following games are now supported:
 - **Fortnite** (slug: `fortnite`)
 - **Clash Royale** (slug: `clash-royale`)
 
+**Note:** The initial seed file sets icon URLs to NULL. The app will display placeholder icons (showing the first letter of the game name) for games without icon URLs. You can update the icon URLs later using the Supabase Table Editor or by running an UPDATE SQL statement.
+
 ## Adding Games to the Database
 
 ### Method 1: Using Supabase SQL Editor (Recommended)
@@ -118,6 +120,34 @@ After running the seed SQL, you can verify the games were added:
 ## Notes
 
 - The `icon_url` field is optional but recommended for better UI experience
+- If `icon_url` is NULL, the app displays a placeholder icon with the first letter of the game name
 - Game slugs must be unique and URL-friendly (lowercase, hyphens instead of spaces)
 - The existing app code requires no changes to support these new games
 - All game management is done through the database
+
+## Updating Icon URLs
+
+If you want to add proper icon URLs to the games after seeding, you can update them using SQL:
+
+```sql
+-- Update Rocket League icon
+UPDATE public.games
+SET icon_url = 'https://your-cdn.com/rocket-league-icon.png'
+WHERE slug = 'rocket-league';
+
+-- Update Fortnite icon
+UPDATE public.games
+SET icon_url = 'https://your-cdn.com/fortnite-icon.png'
+WHERE slug = 'fortnite';
+
+-- Update Clash Royale icon
+UPDATE public.games
+SET icon_url = 'https://your-cdn.com/clash-royale-icon.png'
+WHERE slug = 'clash-royale';
+```
+
+Or use the Supabase Table Editor:
+1. Navigate to **Table Editor** > **games**
+2. Click on the row you want to edit
+3. Update the `icon_url` field
+4. Save the changes
