@@ -699,7 +699,7 @@ const getStyles = (colors) => StyleSheet.create({
     padding: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#FFA500',
+    borderColor: colors.warning,
     borderLeftWidth: 4,
   },
   warningText: {
