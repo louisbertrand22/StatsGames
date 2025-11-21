@@ -35,6 +35,7 @@ export const fetchUserGames = async (userId) => {
       .select(`
         id,
         game_id,
+        game_tag,
         installed_at,
         games:game_id (
           id,
@@ -62,9 +63,10 @@ export const fetchUserGames = async (userId) => {
  * Link a game to user's profile
  * @param {string} userId - The user ID
  * @param {string} gameId - The game ID
+ * @param {string} gameTag - Optional game-specific tag/identifier
  * @returns {Promise<{data: object, error?: any}>}
  */
-export const linkGameToUser = async (userId, gameId) => {
+export const linkGameToUser = async (userId, gameId, gameTag = null) => {
   try {
     const { data, error } = await supabase
       .from('user_games')
@@ -72,6 +74,7 @@ export const linkGameToUser = async (userId, gameId) => {
         {
           user_id: userId,
           game_id: gameId,
+          game_tag: gameTag,
         }
       ])
       .select()
@@ -115,4 +118,40 @@ export const unlinkGameFromUser = async (userId, gameId) => {
   }
 };
 
+/**
+ * Update game tag for a user's linked game
+ * @param {string} userId - The user ID
+ * @param {string} gameId - The game ID
+ * @param {string} gameTag - The game-specific tag/identifier
+ * @returns {Promise<{data: object, error?: any}>}
+ */
+export const updateGameTag = async (userId, gameId, gameTag) => {
+  try {
+    // Validate that gameTag is provided and not empty
+    if (!gameTag || gameTag.trim() === '') {
+      return { 
+        data: null, 
+        error: { message: 'Game tag is required and cannot be empty' } 
+      };
+    }
+
+    const { data, error } = await supabase
+      .from('user_games')
+      .update({ game_tag: gameTag.trim() })
+      .eq('user_id', userId)
+      .eq('game_id', gameId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating game tag:', error);
+      return { data: null, error };
+    }
+
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error updating game tag:', error);
+    return { data: null, error };
+  }
+};
 

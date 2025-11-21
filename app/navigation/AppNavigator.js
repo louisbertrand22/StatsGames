@@ -10,6 +10,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 import NFCShareScreen from '../screens/NFCShareScreen';
 import NFCProfileScreen from '../screens/NFCProfileScreen';
 import GamesScreen from '../screens/GamesScreen';
+import GameDetailScreen from '../screens/GameDetailScreen';
 import { useAuth } from '../contexts/AuthContext';
 import { colors, containerStyles } from '../theme';
 
@@ -25,6 +26,7 @@ const linking = {
       Settings: 'settings',
       NFCShare: 'nfc-share',
       Games: 'games',
+      GameDetail: 'games/:gameId',
       Login: 'login',
     },
   },
@@ -87,6 +89,7 @@ export default function AppNavigator() {
             <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="NFCShare" component={NFCShareScreen} />
             <Stack.Screen name="Games" component={GamesScreen} />
+            <Stack.Screen name="GameDetail" component={GameDetailScreen} />
           </>
         ) : (
           // Non-authenticated routes

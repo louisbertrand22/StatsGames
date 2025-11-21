@@ -15,7 +15,7 @@ import { lightColors, darkColors } from '../theme';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { fetchGames, fetchUserGames, linkGameToUser, unlinkGameFromUser } from '../services/games';
+import { fetchGames, fetchUserGames } from '../services/games';
 
 export default function GamesScreen({ navigation }) {
   const { user } = useAuth();
@@ -24,7 +24,6 @@ export default function GamesScreen({ navigation }) {
   const [games, setGames] = useState([]);
   const [userGames, setUserGames] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [actionLoading, setActionLoading] = useState({});
 
   // Get colors based on theme
   const colors = isDarkMode ? darkColors : lightColors;
@@ -33,6 +32,15 @@ export default function GamesScreen({ navigation }) {
   useEffect(() => {
     loadGames();
   }, []);
+
+  useEffect(() => {
+    // Reload games when user navigates back to this screen
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadGames();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const loadGames = async () => {
     setLoading(true);
@@ -62,51 +70,17 @@ export default function GamesScreen({ navigation }) {
     return userGames.some(ug => ug.game_id === gameId);
   };
 
-  const handleGameAction = async (game) => {
-    const isLinked = isGameLinked(game.id);
-    
-    // Set loading state for this specific game
-    setActionLoading(prev => ({ ...prev, [game.id]: true }));
-
-    let result;
-    if (isLinked) {
-      // Unlink the game
-      result = await unlinkGameFromUser(user.id, game.id);
-      if (!result.error) {
-        setUserGames(prev => prev.filter(ug => ug.game_id !== game.id));
-        Alert.alert('Success', `${game.name} has been removed from your profile`);
-      }
-    } else {
-      // Link the game
-      result = await linkGameToUser(user.id, game.id);
-      if (!result.error) {
-        // Optimistically add the game to the state
-        const newUserGame = {
-          id: result.data.id,
-          game_id: game.id,
-          installed_at: result.data.installed_at,
-          games: game,
-        };
-        setUserGames(prev => [...prev, newUserGame]);
-        Alert.alert('Success', `${game.name} has been added to your profile`);
-      }
-    }
-
-    if (result.error) {
-      Alert.alert('Error', `Failed to ${isLinked ? 'remove' : 'add'} game. Please try again.`);
-      console.error('Game action error:', result.error);
-    }
-
-    // Clear loading state for this game
-    setActionLoading(prev => ({ ...prev, [game.id]: false }));
-  };
-
   const renderGameCard = (game) => {
     const linked = isGameLinked(game.id);
-    const isActionLoading = actionLoading[game.id];
+    const userGame = userGames.find(ug => ug.game_id === game.id);
 
     return (
-      <View key={game.id} style={styles.gameCard}>
+      <TouchableOpacity 
+        key={game.id} 
+        style={styles.gameCard}
+        onPress={() => navigation.navigate('GameDetail', { game })}
+        activeOpacity={0.7}
+      >
         <View style={styles.gameInfo}>
           {game.icon_url ? (
             <Image 
@@ -128,26 +102,16 @@ export default function GamesScreen({ navigation }) {
                 <Text style={styles.linkedBadgeText}>✓ Linked</Text>
               </View>
             )}
+            {linked && userGame?.game_tag && (
+              <Text style={styles.gameTag} numberOfLines={1}>
+                Tag: {userGame.game_tag}
+              </Text>
+            )}
           </View>
         </View>
         
-        <TouchableOpacity
-          style={[
-            styles.actionButton,
-            linked ? styles.unlinkButton : styles.linkButton
-          ]}
-          onPress={() => handleGameAction(game)}
-          disabled={isActionLoading}
-        >
-          {isActionLoading ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Text style={styles.actionButtonText}>
-              {linked ? 'Remove' : 'Add'}
-            </Text>
-          )}
-        </TouchableOpacity>
-      </View>
+        <Text style={styles.arrowIcon}>›</Text>
+      </TouchableOpacity>
     );
   };
 
@@ -355,22 +319,14 @@ const getStyles = (colors) => StyleSheet.create({
     fontWeight: '600',
     color: colors.primary,
   },
-  actionButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-    minWidth: 80,
-    alignItems: 'center',
+  gameTag: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: 2,
   },
-  linkButton: {
-    backgroundColor: colors.primary,
-  },
-  unlinkButton: {
-    backgroundColor: colors.error,
-  },
-  actionButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '700',
+  arrowIcon: {
+    fontSize: 32,
+    color: colors.textSecondary,
+    fontWeight: '300',
   },
 });
