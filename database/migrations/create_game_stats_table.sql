@@ -32,6 +32,21 @@ CREATE INDEX IF NOT EXISTS game_stats_user_id_idx ON public.game_stats(user_id);
 CREATE INDEX IF NOT EXISTS game_stats_game_id_idx ON public.game_stats(game_id);
 CREATE INDEX IF NOT EXISTS game_stats_updated_at_idx ON public.game_stats(updated_at DESC);
 
+-- Create function to automatically update updated_at timestamp
+CREATE OR REPLACE FUNCTION update_game_stats_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger to call the function before updates
+CREATE TRIGGER update_game_stats_updated_at_trigger
+  BEFORE UPDATE ON public.game_stats
+  FOR EACH ROW
+  EXECUTE FUNCTION update_game_stats_updated_at();
+
 -- Enable Row Level Security (RLS)
 ALTER TABLE public.game_stats ENABLE ROW LEVEL SECURITY;
 

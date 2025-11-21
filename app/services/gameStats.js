@@ -24,7 +24,6 @@ export const upsertGameStats = async (userId, gameId, stats) => {
           user_id: userId,
           game_id: gameId,
           stats: stats,
-          updated_at: new Date().toISOString(),
         },
         {
           onConflict: 'user_id,game_id',

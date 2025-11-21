@@ -20,7 +20,7 @@ The application now stores game statistics persistently in the Supabase `game_st
 
 **Constraints:**
 - Unique constraint on `(user_id, game_id)` - one stats entry per user-game pair
-- Automatically updates `updated_at` timestamp on upsert
+- Automatically updates `updated_at` timestamp on update via database trigger
 
 **Indexes:**
 - `game_stats_user_id_idx` - Fast lookup by user
@@ -57,7 +57,7 @@ Inserts or updates game statistics for a user-game pair.
 
 **Behavior:**
 - Uses `upsert` with `onConflict: 'user_id,game_id'` to update existing records
-- Automatically sets `updated_at` to current timestamp
+- `updated_at` timestamp is automatically updated by database trigger
 - Validates that all required parameters are provided
 
 #### `fetchGameStats(userId, gameId)`
@@ -202,6 +202,7 @@ The migration:
 - Creates the `game_stats` table with proper schema
 - Sets up foreign key constraints
 - Creates indexes for performance
+- Adds a trigger to automatically update `updated_at` on row updates
 - Enables RLS (Row Level Security)
 - Creates policies for secure access
 
