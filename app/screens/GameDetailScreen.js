@@ -26,6 +26,7 @@ export default function GameDetailScreen({ navigation, route }) {
   const { isDarkMode } = useTheme();
   const { t } = useLanguage();
   const [gameTag, setGameTag] = useState('');
+  const [originalGameTag, setOriginalGameTag] = useState(''); // Track original tag for cancel
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [userGame, setUserGame] = useState(null);
@@ -65,7 +66,9 @@ export default function GameDetailScreen({ navigation, route }) {
     if (linkedGame) {
       setUserGame(linkedGame);
       setIsLinked(true);
-      setGameTag(linkedGame.game_tag || '');
+      const tag = linkedGame.game_tag || '';
+      setGameTag(tag);
+      setOriginalGameTag(tag); // Store original for cancel functionality
     }
 
     setLoading(false);
@@ -110,6 +113,7 @@ export default function GameDetailScreen({ navigation, route }) {
       console.error('Save tag error:', error);
     } else {
       Alert.alert('Success', 'Game tag saved successfully!');
+      setOriginalGameTag(gameTag); // Update original tag after successful save
       setIsEditingTag(false); // Close edit mode after successful save
       // Load player data after saving tag for Clash of Clans
       if (game.slug === 'clash-of-clans' && gameTag) {
@@ -134,6 +138,7 @@ export default function GameDetailScreen({ navigation, route }) {
         setIsLinked(false);
         setUserGame(null);
         setGameTag('');
+        setOriginalGameTag(''); // Clear original tag when unlinking
         setPlayerData(null); // Clear player data when unlinking
         setSaving(false);
         Alert.alert('Success', `${game.name} has been removed from your profile.`);
@@ -306,7 +311,7 @@ export default function GameDetailScreen({ navigation, route }) {
                       onPress={() => {
                         setIsEditingTag(false);
                         // Reset to saved value if canceling
-                        setGameTag(userGame?.game_tag || '');
+                        setGameTag(originalGameTag);
                       }}
                     >
                       <Text style={styles.cancelButtonText}>Cancel</Text>
@@ -552,7 +557,6 @@ const getStyles = (colors) => StyleSheet.create({
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    marginRight: 8,
   },
   refreshButtonText: {
     color: colors.primary,
