@@ -95,9 +95,11 @@ export default function GameDetailScreen({ navigation, route }) {
     if (error) {
       console.error('Error loading player data:', error);
       setPlayerDataError(error.message || 'Failed to load player data');
-      setPlayerData(null);
+      // Don't clear playerData if we already have cached data from database
+      // This preserves the database cache when API calls fail
     } else {
       setPlayerData(data);
+      setPlayerDataError(null); // Clear any previous errors on success
       if (cached) {
         console.log('Loaded player data from cache');
       } else {
@@ -294,34 +296,43 @@ export default function GameDetailScreen({ navigation, route }) {
                     </TouchableOpacity>
                   </View>
                 ) : playerData ? (
-                  <View style={[styles.statsCard, loadingPlayerData && styles.statsCardRefreshing]}>
-                    <View style={styles.statsRow}>
-                      <Text style={styles.statsLabel}>Name:</Text>
-                      <Text style={styles.statsValue}>{playerData.name}</Text>
-                    </View>
-                    <View style={styles.statsRow}>
-                      <Text style={styles.statsLabel}>Tag:</Text>
-                      <Text style={styles.statsValue}>{playerData.tag}</Text>
-                    </View>
-                    <View style={styles.statsRow}>
-                      <Text style={styles.statsLabel}>Town Hall:</Text>
-                      <Text style={styles.statsValue}>Level {playerData.townHallLevel}</Text>
-                    </View>
-                    <View style={styles.statsRow}>
-                      <Text style={styles.statsLabel}>Trophies:</Text>
-                      <Text style={styles.statsValue}>{playerData.trophies?.toLocaleString() || 'N/A'}</Text>
-                    </View>
-                    <View style={styles.statsRow}>
-                      <Text style={styles.statsLabel}>Experience:</Text>
-                      <Text style={styles.statsValue}>Level {playerData.expLevel}</Text>
-                    </View>
-                    {playerData.clan && (
-                      <View style={styles.statsRow}>
-                        <Text style={styles.statsLabel}>Clan:</Text>
-                        <Text style={styles.statsValue}>{playerData.clan.name}</Text>
+                  <>
+                    {playerDataError && (
+                      <View style={styles.warningBanner}>
+                        <Text style={styles.warningText}>
+                          ℹ️ Showing cached data. Unable to refresh: {playerDataError}
+                        </Text>
                       </View>
                     )}
-                  </View>
+                    <View style={[styles.statsCard, loadingPlayerData && styles.statsCardRefreshing]}>
+                      <View style={styles.statsRow}>
+                        <Text style={styles.statsLabel}>Name:</Text>
+                        <Text style={styles.statsValue}>{playerData.name}</Text>
+                      </View>
+                      <View style={styles.statsRow}>
+                        <Text style={styles.statsLabel}>Tag:</Text>
+                        <Text style={styles.statsValue}>{playerData.tag}</Text>
+                      </View>
+                      <View style={styles.statsRow}>
+                        <Text style={styles.statsLabel}>Town Hall:</Text>
+                        <Text style={styles.statsValue}>Level {playerData.townHallLevel}</Text>
+                      </View>
+                      <View style={styles.statsRow}>
+                        <Text style={styles.statsLabel}>Trophies:</Text>
+                        <Text style={styles.statsValue}>{playerData.trophies?.toLocaleString() || 'N/A'}</Text>
+                      </View>
+                      <View style={styles.statsRow}>
+                        <Text style={styles.statsLabel}>Experience:</Text>
+                        <Text style={styles.statsValue}>Level {playerData.expLevel}</Text>
+                      </View>
+                      {playerData.clan && (
+                        <View style={styles.statsRow}>
+                          <Text style={styles.statsLabel}>Clan:</Text>
+                          <Text style={styles.statsValue}>{playerData.clan.name}</Text>
+                        </View>
+                      )}
+                    </View>
+                  </>
                 ) : null}
               </View>
             )}
@@ -681,6 +692,20 @@ const getStyles = (colors) => StyleSheet.create({
     color: colors.textSecondary,
     marginBottom: 16,
     lineHeight: 20,
+  },
+  warningBanner: {
+    backgroundColor: colors.surface,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#FFA500',
+    borderLeftWidth: 4,
+  },
+  warningText: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    lineHeight: 18,
   },
   retryButton: {
     backgroundColor: colors.primary,
