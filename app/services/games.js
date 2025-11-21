@@ -127,6 +127,14 @@ export const unlinkGameFromUser = async (userId, gameId) => {
  */
 export const updateGameTag = async (userId, gameId, gameTag) => {
   try {
+    // Validate that gameTag is provided and not empty
+    if (gameTag === null || gameTag === undefined) {
+      return { 
+        data: null, 
+        error: { message: 'Game tag is required' } 
+      };
+    }
+
     const { data, error } = await supabase
       .from('user_games')
       .update({ game_tag: gameTag })

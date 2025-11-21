@@ -7,12 +7,20 @@
 /**
  * Games that require player tags/identifiers
  * Add game slugs to this array to enable tag input for those games
+ * 
+ * Currently enabled:
+ * - clash-of-clans: Requires Supercell player tag
+ * 
+ * To enable for other games, uncomment them below:
+ * - clash-royale: Would require Supercell player tag
+ * - fortnite: Would require Epic Games ID
+ * - rocket-league: Would require platform-specific ID
  */
 export const GAMES_REQUIRING_TAGS = [
   'clash-of-clans',
-  // Add more game slugs here as needed
-  // 'clash-royale',
-  // 'fortnite',
+  // 'clash-royale',  // Uncomment to enable tag input for Clash Royale
+  // 'fortnite',      // Uncomment to enable tag input for Fortnite
+  // 'rocket-league', // Uncomment to enable tag input for Rocket League
 ];
 
 /**

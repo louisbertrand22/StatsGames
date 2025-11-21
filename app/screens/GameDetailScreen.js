@@ -88,10 +88,12 @@ export default function GameDetailScreen({ navigation, route }) {
       if (error) {
         Alert.alert('Error', 'Failed to remove game. Please try again.');
         console.error('Unlink error:', error);
+        setSaving(false);
       } else {
         setIsLinked(false);
         setUserGame(null);
         setGameTag('');
+        setSaving(false);
         Alert.alert('Success', `${game.name} has been removed from your profile.`);
       }
     } else {
@@ -100,14 +102,14 @@ export default function GameDetailScreen({ navigation, route }) {
       if (error) {
         Alert.alert('Error', 'Failed to add game. Please try again.');
         console.error('Link error:', error);
+        setSaving(false);
       } else {
         setIsLinked(true);
         setUserGame(data);
+        setSaving(false);
         Alert.alert('Success', `${game.name} has been added to your profile.`);
       }
     }
-
-    setSaving(false);
   };
 
   const requiresTag = requiresPlayerTag(game.slug);
@@ -185,13 +187,13 @@ export default function GameDetailScreen({ navigation, route }) {
                 
                 <View style={styles.inputContainer}>
                   <TextInput
-                    style={styles.input}
+                    style={[styles.input, !isLinked && styles.inputDisabled]}
                     value={gameTag}
                     onChangeText={setGameTag}
                     placeholder={tagPlaceholder}
                     placeholderTextColor={colors.textSecondary}
                     autoCapitalize="characters"
-                    editable={isLinked}
+                    editable={isLinked && !saving}
                   />
                 </View>
 
@@ -368,6 +370,10 @@ const getStyles = (colors) => StyleSheet.create({
     color: colors.text,
     borderWidth: 1,
     borderColor: colors.border,
+  },
+  inputDisabled: {
+    opacity: 0.5,
+    backgroundColor: colors.border,
   },
   infoText: {
     fontSize: 14,
