@@ -18,6 +18,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { fetchUserGames, updateGameTag, linkGameToUser, unlinkGameFromUser } from '../services/games';
 import { requiresPlayerTag, getTagLabel, getTagPlaceholder, getTagDescription } from '../config/games';
+import { fetchPlayerData } from '../services/clashApi';
 
 export default function GameDetailScreen({ navigation, route }) {
   const { game } = route.params; // Passed from GamesScreen
@@ -29,6 +30,9 @@ export default function GameDetailScreen({ navigation, route }) {
   const [saving, setSaving] = useState(false);
   const [userGame, setUserGame] = useState(null);
   const [isLinked, setIsLinked] = useState(false);
+  const [playerData, setPlayerData] = useState(null);
+  const [loadingPlayerData, setLoadingPlayerData] = useState(false);
+  const [playerDataError, setPlayerDataError] = useState(null);
 
   // Get colors based on theme
   const colors = isDarkMode ? darkColors : lightColors;
@@ -37,6 +41,13 @@ export default function GameDetailScreen({ navigation, route }) {
   useEffect(() => {
     loadUserGame();
   }, []);
+
+  useEffect(() => {
+    // Load player data when tag is available for Clash of Clans
+    if (isLinked && gameTag && game.slug === 'clash-of-clans') {
+      loadPlayerData(gameTag);
+    }
+  }, [isLinked, gameTag, game.slug]);
 
   const loadUserGame = async () => {
     setLoading(true);
@@ -59,6 +70,30 @@ export default function GameDetailScreen({ navigation, route }) {
     setLoading(false);
   };
 
+  const loadPlayerData = async (tag, forceRefresh = false) => {
+    if (!tag || game.slug !== 'clash-of-clans') return;
+
+    setLoadingPlayerData(true);
+    setPlayerDataError(null);
+
+    const { data, error, cached } = await fetchPlayerData(tag, forceRefresh);
+    
+    if (error) {
+      console.error('Error loading player data:', error);
+      setPlayerDataError(error.message || 'Failed to load player data');
+      setPlayerData(null);
+    } else {
+      setPlayerData(data);
+      if (cached) {
+        console.log('Loaded player data from cache');
+      } else {
+        console.log('Loaded fresh player data from API');
+      }
+    }
+
+    setLoadingPlayerData(false);
+  };
+
   const handleSaveTag = async () => {
     if (!isLinked) {
       Alert.alert('Error', 'Please link this game to your profile first.');
@@ -74,6 +109,10 @@ export default function GameDetailScreen({ navigation, route }) {
       console.error('Save tag error:', error);
     } else {
       Alert.alert('Success', 'Game tag saved successfully!');
+      // Load player data after saving tag for Clash of Clans
+      if (game.slug === 'clash-of-clans' && gameTag) {
+        loadPlayerData(gameTag, true); // Force refresh to get latest data
+      }
     }
 
     setSaving(false);
@@ -93,6 +132,7 @@ export default function GameDetailScreen({ navigation, route }) {
         setIsLinked(false);
         setUserGame(null);
         setGameTag('');
+        setPlayerData(null); // Clear player data when unlinking
         setSaving(false);
         Alert.alert('Success', `${game.name} has been removed from your profile.`);
       }
@@ -217,6 +257,73 @@ export default function GameDetailScreen({ navigation, route }) {
                     Link this game to your profile to add your player tag.
                   </Text>
                 )}
+              </View>
+            )}
+
+            {/* Player Stats Section - Only for Clash of Clans */}
+            {game.slug === 'clash-of-clans' && isLinked && gameTag && (
+              <View style={styles.section}>
+                <View style={styles.statsHeader}>
+                  <Text style={styles.sectionTitle}>Player Stats</Text>
+                  {playerData && (
+                    <TouchableOpacity
+                      style={styles.refreshButton}
+                      onPress={() => loadPlayerData(gameTag, true)}
+                      disabled={loadingPlayerData}
+                    >
+                      <Text style={styles.refreshButtonText}>
+                        {loadingPlayerData ? '...' : '↻ Refresh'}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+
+                {loadingPlayerData ? (
+                  <View style={styles.statsLoadingContainer}>
+                    <ActivityIndicator size="small" color={colors.primary} />
+                    <Text style={styles.statsLoadingText}>Loading player data...</Text>
+                  </View>
+                ) : playerDataError ? (
+                  <View style={styles.errorCard}>
+                    <Text style={styles.errorTitle}>⚠️ Unable to Load Stats</Text>
+                    <Text style={styles.errorText}>{playerDataError}</Text>
+                    <TouchableOpacity
+                      style={[styles.button, styles.retryButton]}
+                      onPress={() => loadPlayerData(gameTag, true)}
+                    >
+                      <Text style={styles.buttonText}>Retry</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : playerData ? (
+                  <View style={styles.statsCard}>
+                    <View style={styles.statsRow}>
+                      <Text style={styles.statsLabel}>Name:</Text>
+                      <Text style={styles.statsValue}>{playerData.name}</Text>
+                    </View>
+                    <View style={styles.statsRow}>
+                      <Text style={styles.statsLabel}>Tag:</Text>
+                      <Text style={styles.statsValue}>{playerData.tag}</Text>
+                    </View>
+                    <View style={styles.statsRow}>
+                      <Text style={styles.statsLabel}>Town Hall:</Text>
+                      <Text style={styles.statsValue}>Level {playerData.townHallLevel}</Text>
+                    </View>
+                    <View style={styles.statsRow}>
+                      <Text style={styles.statsLabel}>Trophies:</Text>
+                      <Text style={styles.statsValue}>{playerData.trophies?.toLocaleString() || 'N/A'}</Text>
+                    </View>
+                    <View style={styles.statsRow}>
+                      <Text style={styles.statsLabel}>Experience:</Text>
+                      <Text style={styles.statsValue}>Level {playerData.expLevel}</Text>
+                    </View>
+                    {playerData.clan && (
+                      <View style={styles.statsRow}>
+                        <Text style={styles.statsLabel}>Clan:</Text>
+                        <Text style={styles.statsValue}>{playerData.clan.name}</Text>
+                      </View>
+                    )}
+                  </View>
+                ) : null}
               </View>
             )}
 
@@ -403,5 +510,86 @@ const getStyles = (colors) => StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '700',
+  },
+  statsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  refreshButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  refreshButtonText: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  statsLoadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  statsLoadingText: {
+    marginLeft: 12,
+    fontSize: 14,
+    color: colors.textSecondary,
+  },
+  statsCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.divider,
+  },
+  statsLabel: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  statsValue: {
+    fontSize: 15,
+    color: colors.textSecondary,
+    fontWeight: '500',
+  },
+  errorCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: colors.error,
+  },
+  errorTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.error,
+    marginBottom: 8,
+  },
+  errorText: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    marginBottom: 16,
+    lineHeight: 20,
+  },
+  retryButton: {
+    backgroundColor: colors.primary,
+    marginTop: 8,
   },
 });
