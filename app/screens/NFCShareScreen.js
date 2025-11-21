@@ -191,7 +191,7 @@ export default function NFCShareScreen({ navigation, route }) {
       <View style={styles.content}>
         {/* Header with Gradient Background */}
         <LinearGradient
-          colors={colors.gradients.violet}
+          colors={colors.gradients.blue}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.headerGradient}

@@ -143,7 +143,7 @@ export default function ProfileScreen({ navigation }) {
       >
         {/* Header with Gradient Background */}
         <LinearGradient
-          colors={colors.gradients.green}
+          colors={colors.gradients.blue}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.headerGradient}
