@@ -19,7 +19,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { fetchUserGames, updateGameTag, linkGameToUser, unlinkGameFromUser } from '../services/games';
 import { requiresPlayerTag, getTagLabel, getTagPlaceholder, getTagDescription } from '../config/games';
 import { fetchPlayerData } from '../services/clashApi';
-import { upsertGameStats, deleteGameStats } from '../services/gameStats';
+import { upsertGameStats, deleteGameStats, fetchGameStats } from '../services/gameStats';
 
 export default function GameDetailScreen({ navigation, route }) {
   const { game } = route.params; // Passed from GamesScreen
@@ -70,6 +70,15 @@ export default function GameDetailScreen({ navigation, route }) {
       const tag = linkedGame.game_tag || '';
       setGameTag(tag);
       setOriginalGameTag(tag); // Store original for cancel functionality
+      
+      // Load cached stats from database for Clash of Clans
+      if (game.slug === 'clash-of-clans' && tag) {
+        const { data: cachedStats, error: statsError } = await fetchGameStats(user.id, game.id);
+        if (!statsError && cachedStats?.stats) {
+          console.log('Loaded cached stats from database');
+          setPlayerData(cachedStats.stats);
+        }
+      }
     }
 
     setLoading(false);
@@ -268,12 +277,12 @@ export default function GameDetailScreen({ navigation, route }) {
                   </View>
                 </View>
 
-                {loadingPlayerData ? (
+                {loadingPlayerData && !playerData ? (
                   <View style={styles.statsLoadingContainer}>
                     <ActivityIndicator size="small" color={colors.primary} />
                     <Text style={styles.statsLoadingText}>Loading player data...</Text>
                   </View>
-                ) : playerDataError ? (
+                ) : playerDataError && !playerData ? (
                   <View style={styles.errorCard}>
                     <Text style={styles.errorTitle}>⚠️ Unable to Load Stats</Text>
                     <Text style={styles.errorText}>{playerDataError}</Text>
@@ -285,7 +294,7 @@ export default function GameDetailScreen({ navigation, route }) {
                     </TouchableOpacity>
                   </View>
                 ) : playerData ? (
-                  <View style={styles.statsCard}>
+                  <View style={[styles.statsCard, loadingPlayerData && styles.statsCardRefreshing]}>
                     <View style={styles.statsRow}>
                       <Text style={styles.statsLabel}>Name:</Text>
                       <Text style={styles.statsValue}>{playerData.name}</Text>
@@ -633,6 +642,9 @@ const getStyles = (colors) => StyleSheet.create({
     padding: 16,
     borderWidth: 1,
     borderColor: colors.border,
+  },
+  statsCardRefreshing: {
+    opacity: 0.6,
   },
   statsRow: {
     flexDirection: 'row',
