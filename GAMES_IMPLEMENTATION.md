@@ -1,11 +1,12 @@
-# Implementation Summary: Rocket League, Fortnite, and Clash Royale Support
+# Implementation Summary: Game Tag Registration and Four Game Support
 
 ## Overview
 
-This document summarizes the implementation of support for three new games in the StatsGames application:
+This document summarizes the implementation of support for four games in the StatsGames application:
+- **Clash of Clans** (with player tag registration)
+- **Clash Royale**
 - **Rocket League**
 - **Fortnite**
-- **Clash Royale**
 
 ## What Was Done
 

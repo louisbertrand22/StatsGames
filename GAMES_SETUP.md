@@ -9,9 +9,10 @@ The StatsGames application supports multiple games. Users can link games to thei
 ## Currently Supported Games
 
 The following games are now supported:
+- **Clash of Clans** (slug: `clash-of-clans`) - Supports player tag registration
+- **Clash Royale** (slug: `clash-royale`)
 - **Rocket League** (slug: `rocket-league`)
 - **Fortnite** (slug: `fortnite`)
-- **Clash Royale** (slug: `clash-royale`)
 
 **Note:** The initial seed file sets icon URLs to NULL. The app will display placeholder icons (showing the first letter of the game name) for games without icon URLs. You can update the icon URLs later using the Supabase Table Editor or by running an UPDATE SQL statement.
 
@@ -25,7 +26,7 @@ The following games are now supported:
 4. Paste into the SQL Editor
 5. Click **Run** to execute the SQL
 
-The SQL script will insert all three games (Rocket League, Fortnite, and Clash Royale) into the games table. The `ON CONFLICT (slug) DO NOTHING` clause ensures that running the script multiple times won't create duplicates.
+The SQL script will insert all four games (Clash of Clans, Clash Royale, Rocket League, and Fortnite) into the games table. The `ON CONFLICT (slug) DO NOTHING` clause ensures that running the script multiple times won't create duplicates.
 
 ### Method 2: Using Supabase API
 
@@ -37,6 +38,16 @@ import { supabase } from './services/supabase';
 const addGames = async () => {
   const games = [
     {
+      name: 'Clash of Clans',
+      slug: 'clash-of-clans',
+      icon_url: 'https://cdn.supercell.com/...',
+    },
+    {
+      name: 'Clash Royale',
+      slug: 'clash-royale',
+      icon_url: 'https://play-lh.googleusercontent.com/...',
+    },
+    {
       name: 'Rocket League',
       slug: 'rocket-league',
       icon_url: 'https://cdn.cloudflare.steamstatic.com/...',
@@ -45,11 +56,6 @@ const addGames = async () => {
       name: 'Fortnite',
       slug: 'fortnite',
       icon_url: 'https://cdn2.unrealengine.com/...',
-    },
-    {
-      name: 'Clash Royale',
-      slug: 'clash-royale',
-      icon_url: 'https://play-lh.googleusercontent.com/...',
     },
   ];
 
@@ -114,8 +120,9 @@ After running the seed SQL, you can verify the games were added:
 
 2. In the App:
    - Open the app and navigate to the Games screen
-   - You should see Rocket League, Fortnite, and Clash Royale listed
+   - You should see Clash of Clans, Clash Royale, Rocket League, and Fortnite listed
    - You can link/unlink these games from your profile
+   - For Clash of Clans, you can also register your player tag by tapping on the game
 
 ## Notes
 
