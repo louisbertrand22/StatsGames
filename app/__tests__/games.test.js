@@ -16,7 +16,7 @@ jest.mock('../services/supabase', () => ({
 }));
 
 // Import after mocking
-const { fetchGames, fetchUserGames, linkGameToUser, unlinkGameFromUser } = require('../services/games');
+const { fetchGames, fetchUserGames, linkGameToUser, unlinkGameFromUser, updateGameTag } = require('../services/games');
 
 describe('Games Service', () => {
   beforeEach(() => {
@@ -58,8 +58,15 @@ describe('Games Service', () => {
       expect(result.error).toBeNull();
     });
 
-    it('should fetch and handle Rocket League, Fortnite, and Clash Royale', async () => {
+    it('should fetch and handle Clash of Clans, Clash Royale, Rocket League, and Fortnite', async () => {
       const mockGames = [
+        {
+          id: 'game-clash-of-clans',
+          name: 'Clash of Clans',
+          slug: 'clash-of-clans',
+          icon_url: null,
+          created_at: new Date().toISOString(),
+        },
         {
           id: 'game-clash-royale',
           name: 'Clash Royale',
@@ -95,14 +102,15 @@ describe('Games Service', () => {
       const result = await fetchGames();
 
       expect(result.data).toBeDefined();
-      expect(result.data.length).toBe(3);
+      expect(result.data.length).toBe(4);
       expect(result.error).toBeNull();
       
       // Verify each game has the required fields
       const gameNames = result.data.map(g => g.name);
+      expect(gameNames).toContain('Clash of Clans');
+      expect(gameNames).toContain('Clash Royale');
       expect(gameNames).toContain('Rocket League');
       expect(gameNames).toContain('Fortnite');
-      expect(gameNames).toContain('Clash Royale');
       
       // Verify all games have slugs
       result.data.forEach(game => {
@@ -134,6 +142,7 @@ describe('Games Service', () => {
         {
           id: 'ug-1',
           game_id: 'game-1',
+          game_tag: null,
           installed_at: new Date().toISOString(),
           games: {
             id: 'game-1',
@@ -160,6 +169,41 @@ describe('Games Service', () => {
       expect(result.data).toBeDefined();
       expect(result.data.length).toBe(1);
       expect(result.data[0].games.name).toBe('Test Game 1');
+      expect(result.error).toBeNull();
+    });
+
+    it('should fetch user games with game tags', async () => {
+      const mockUserGames = [
+        {
+          id: 'ug-1',
+          game_id: 'game-clash-of-clans',
+          game_tag: '#ABC123XYZ',
+          installed_at: new Date().toISOString(),
+          games: {
+            id: 'game-clash-of-clans',
+            name: 'Clash of Clans',
+            slug: 'clash-of-clans',
+            icon_url: null,
+          },
+        },
+      ];
+
+      mockSupabase.from.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            order: jest.fn().mockResolvedValue({
+              data: mockUserGames,
+              error: null,
+            }),
+          }),
+        }),
+      });
+
+      const result = await fetchUserGames('user-123');
+
+      expect(result.data).toBeDefined();
+      expect(result.data.length).toBe(1);
+      expect(result.data[0].game_tag).toBe('#ABC123XYZ');
       expect(result.error).toBeNull();
     });
   });
@@ -192,11 +236,12 @@ describe('Games Service', () => {
       expect(result.error).toBeNull();
     });
 
-    it('should link Rocket League, Fortnite, and Clash Royale to user', async () => {
+    it('should link Clash of Clans, Clash Royale, Rocket League, and Fortnite to user', async () => {
       const games = [
+        { id: 'game-clash-of-clans', name: 'Clash of Clans' },
+        { id: 'game-clash-royale', name: 'Clash Royale' },
         { id: 'game-rocket-league', name: 'Rocket League' },
         { id: 'game-fortnite', name: 'Fortnite' },
-        { id: 'game-clash-royale', name: 'Clash Royale' },
       ];
 
       for (const game of games) {
@@ -204,6 +249,7 @@ describe('Games Service', () => {
           id: `ug-${game.id}`,
           user_id: 'user-123',
           game_id: game.id,
+          game_tag: null,
           installed_at: new Date().toISOString(),
         };
 
@@ -225,6 +271,33 @@ describe('Games Service', () => {
         expect(result.data.game_id).toBe(game.id);
         expect(result.error).toBeNull();
       }
+    });
+
+    it('should link game with player tag', async () => {
+      const mockLinkData = {
+        id: 'ug-1',
+        user_id: 'user-123',
+        game_id: 'game-clash-of-clans',
+        game_tag: '#ABC123XYZ',
+        installed_at: new Date().toISOString(),
+      };
+
+      mockSupabase.from.mockReturnValue({
+        insert: jest.fn().mockReturnValue({
+          select: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue({
+              data: mockLinkData,
+              error: null,
+            }),
+          }),
+        }),
+      });
+
+      const result = await linkGameToUser('user-123', 'game-clash-of-clans', '#ABC123XYZ');
+
+      expect(result.data).toBeDefined();
+      expect(result.data.game_tag).toBe('#ABC123XYZ');
+      expect(result.error).toBeNull();
     });
 
     it('should handle duplicate link errors', async () => {
@@ -280,6 +353,61 @@ describe('Games Service', () => {
       const result = await unlinkGameFromUser('user-123', 'game-1');
 
       expect(result.error).toBeDefined();
+    });
+  });
+
+  describe('updateGameTag', () => {
+    it('should update game tag successfully', async () => {
+      const mockUpdateData = {
+        id: 'ug-1',
+        user_id: 'user-123',
+        game_id: 'game-clash-of-clans',
+        game_tag: '#ABC123XYZ',
+        installed_at: new Date().toISOString(),
+      };
+
+      mockSupabase.from.mockReturnValue({
+        update: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              select: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: mockUpdateData,
+                  error: null,
+                }),
+              }),
+            }),
+          }),
+        }),
+      });
+
+      const result = await updateGameTag('user-123', 'game-clash-of-clans', '#ABC123XYZ');
+
+      expect(result.data).toBeDefined();
+      expect(result.data.game_tag).toBe('#ABC123XYZ');
+      expect(result.error).toBeNull();
+    });
+
+    it('should handle update errors gracefully', async () => {
+      mockSupabase.from.mockReturnValue({
+        update: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              select: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: null,
+                  error: { message: 'Update failed' },
+                }),
+              }),
+            }),
+          }),
+        }),
+      });
+
+      const result = await updateGameTag('user-123', 'game-clash-of-clans', '#ABC123XYZ');
+
+      expect(result.error).toBeDefined();
+      expect(result.data).toBeNull();
     });
   });
 });
