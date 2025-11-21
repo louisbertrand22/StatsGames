@@ -128,16 +128,16 @@ export const unlinkGameFromUser = async (userId, gameId) => {
 export const updateGameTag = async (userId, gameId, gameTag) => {
   try {
     // Validate that gameTag is provided and not empty
-    if (gameTag === null || gameTag === undefined) {
+    if (gameTag === null || gameTag === undefined || gameTag.trim() === '') {
       return { 
         data: null, 
-        error: { message: 'Game tag is required' } 
+        error: { message: 'Game tag is required and cannot be empty' } 
       };
     }
 
     const { data, error } = await supabase
       .from('user_games')
-      .update({ game_tag: gameTag })
+      .update({ game_tag: gameTag.trim() })
       .eq('user_id', userId)
       .eq('game_id', gameId)
       .select()
