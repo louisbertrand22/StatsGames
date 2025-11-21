@@ -29,7 +29,7 @@ export default function SettingsScreen({ navigation }) {
       >
         {/* Header with Gradient Background */}
         <LinearGradient
-          colors={colors.gradients.brown}
+          colors={colors.gradients.blue}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.headerGradient}
