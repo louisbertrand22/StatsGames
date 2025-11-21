@@ -19,6 +19,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { fetchUserGames, updateGameTag, linkGameToUser, unlinkGameFromUser } from '../services/games';
 import { requiresPlayerTag, getTagLabel, getTagPlaceholder, getTagDescription } from '../config/games';
 import { fetchPlayerData } from '../services/clashApi';
+import { upsertGameStats, deleteGameStats } from '../services/gameStats';
 
 export default function GameDetailScreen({ navigation, route }) {
   const { game } = route.params; // Passed from GamesScreen
@@ -93,6 +94,15 @@ export default function GameDetailScreen({ navigation, route }) {
       } else {
         console.log('Loaded fresh player data from API');
       }
+      
+      // Store stats in database
+      const { error: statsError } = await upsertGameStats(user.id, game.id, data);
+      if (statsError) {
+        console.error('Error saving game stats to database:', statsError);
+        // Don't show error to user since stats display still works
+      } else {
+        console.log('Successfully saved game stats to database');
+      }
     }
 
     setLoadingPlayerData(false);
@@ -135,6 +145,13 @@ export default function GameDetailScreen({ navigation, route }) {
         console.error('Unlink error:', error);
         setSaving(false);
       } else {
+        // Delete associated game stats
+        const { error: deleteStatsError } = await deleteGameStats(user.id, game.id);
+        if (deleteStatsError) {
+          console.error('Error deleting game stats:', deleteStatsError);
+          // Continue even if stats deletion fails
+        }
+        
         setIsLinked(false);
         setUserGame(null);
         setGameTag('');
