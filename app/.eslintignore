@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+.expo/
+.expo-shared/
+
+# Build outputs
+dist/
+build/
+web-build/
+
+# Configuration
+*.config.js
+babel.config.js
+jest.config.js
+app.config.js
+
+# Test setup
+jest.setup.js
+
+# Assets
+assets/
+
+# Misc
+.DS_Store
+*.log

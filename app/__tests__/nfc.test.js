@@ -5,8 +5,6 @@
  * a live Supabase connection. They test the core logic and error handling.
  */
 
-import { jest } from '@jest/globals';
-
 // Mock Supabase client
 const mockSupabase = {
   from: jest.fn(),
@@ -16,6 +14,9 @@ const mockSupabase = {
 jest.mock('../services/supabase', () => ({
   supabase: mockSupabase,
 }));
+
+// Import after mocking
+const { createNFCToken, getProfileByToken } = require('../services/nfc');
 
 describe('NFC Service', () => {
   beforeEach(() => {
@@ -44,7 +45,6 @@ describe('NFC Service', () => {
         }),
       });
 
-      const { createNFCToken } = await import('../services/nfc');
       const result = await createNFCToken('user-123', 15);
 
       expect(result.token).toBeDefined();
@@ -66,7 +66,6 @@ describe('NFC Service', () => {
         }),
       });
 
-      const { createNFCToken } = await import('../services/nfc');
       const result = await createNFCToken('user-123', 15);
 
       expect(result.error).toBeDefined();
@@ -107,7 +106,7 @@ describe('NFC Service', () => {
 
       // Setup chained mock calls
       let callCount = 0;
-      mockSupabase.from.mockImplementation((table) => {
+      mockSupabase.from.mockImplementation(() => {
         callCount++;
         if (callCount === 1) {
           // First call: nfc_shares
@@ -146,7 +145,6 @@ describe('NFC Service', () => {
         }
       });
 
-      const { getProfileByToken } = await import('../services/nfc');
       const result = await getProfileByToken('valid-token');
 
       expect(result.user).toBeDefined();
@@ -174,7 +172,6 @@ describe('NFC Service', () => {
         }),
       });
 
-      const { getProfileByToken } = await import('../services/nfc');
       const result = await getProfileByToken('expired-token');
 
       expect(result.error).toBeDefined();
