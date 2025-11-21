@@ -33,6 +33,7 @@ export default function GameDetailScreen({ navigation, route }) {
   const [playerData, setPlayerData] = useState(null);
   const [loadingPlayerData, setLoadingPlayerData] = useState(false);
   const [playerDataError, setPlayerDataError] = useState(null);
+  const [isEditingTag, setIsEditingTag] = useState(false);
 
   // Get colors based on theme
   const colors = isDarkMode ? darkColors : lightColors;
@@ -109,6 +110,7 @@ export default function GameDetailScreen({ navigation, route }) {
       console.error('Save tag error:', error);
     } else {
       Alert.alert('Success', 'Game tag saved successfully!');
+      setIsEditingTag(false); // Close edit mode after successful save
       // Load player data after saving tag for Clash of Clans
       if (game.slug === 'clash-of-clans' && gameTag) {
         loadPlayerData(gameTag, true); // Force refresh to get latest data
@@ -218,64 +220,30 @@ export default function GameDetailScreen({ navigation, route }) {
               </View>
             </View>
 
-            {/* Game Tag Section */}
-            {requiresTag && (
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>{tagLabel}</Text>
-                <Text style={styles.sectionDescription}>
-                  {tagDescription}
-                </Text>
-                
-                <View style={styles.inputContainer}>
-                  <TextInput
-                    style={[styles.input, !isLinked && styles.inputDisabled]}
-                    value={gameTag}
-                    onChangeText={setGameTag}
-                    placeholder={tagPlaceholder}
-                    placeholderTextColor={colors.textSecondary}
-                    autoCapitalize="characters"
-                    editable={isLinked && !saving}
-                  />
-                </View>
-
-                {isLinked && (
-                  <TouchableOpacity
-                    style={[styles.button, styles.saveButton]}
-                    onPress={handleSaveTag}
-                    disabled={saving || !gameTag?.trim()}
-                  >
-                    {saving ? (
-                      <ActivityIndicator size="small" color="#fff" />
-                    ) : (
-                      <Text style={styles.buttonText}>Save Tag</Text>
-                    )}
-                  </TouchableOpacity>
-                )}
-
-                {!isLinked && (
-                  <Text style={styles.infoText}>
-                    Link this game to your profile to add your player tag.
-                  </Text>
-                )}
-              </View>
-            )}
-
             {/* Player Stats Section - Only for Clash of Clans */}
-            {game.slug === 'clash-of-clans' && isLinked && gameTag && (
+            {game.slug === 'clash-of-clans' && isLinked && gameTag && !isEditingTag && (
               <View style={styles.section}>
                 <View style={styles.statsHeader}>
                   <Text style={styles.sectionTitle}>Player Stats</Text>
-                  {playerData && (
+                  <View style={styles.statsHeaderButtons}>
+                    {playerData && (
+                      <TouchableOpacity
+                        style={styles.refreshButton}
+                        onPress={() => loadPlayerData(gameTag, true)}
+                        disabled={loadingPlayerData}
+                      >
+                        <Text style={styles.refreshButtonText}>
+                          {loadingPlayerData ? '...' : '↻ Refresh'}
+                        </Text>
+                      </TouchableOpacity>
+                    )}
                     <TouchableOpacity
-                      style={styles.refreshButton}
-                      onPress={() => loadPlayerData(gameTag, true)}
-                      disabled={loadingPlayerData}
+                      style={styles.editButton}
+                      onPress={() => setIsEditingTag(true)}
                     >
-                      <Text style={styles.refreshButtonText}>
-                        {loadingPlayerData ? '...' : '↻ Refresh'}
-                      </Text>
+                      <Text style={styles.editButtonText}>✏️ Edit Tag</Text>
                     </TouchableOpacity>
-                  )}
+                  </View>
                 </View>
 
                 {loadingPlayerData ? (
@@ -324,6 +292,62 @@ export default function GameDetailScreen({ navigation, route }) {
                     )}
                   </View>
                 ) : null}
+              </View>
+            )}
+
+            {/* Game Tag Section */}
+            {requiresTag && (!gameTag || isEditingTag) && (
+              <View style={styles.section}>
+                <View style={styles.tagEditHeader}>
+                  <Text style={styles.sectionTitle}>{tagLabel}</Text>
+                  {isEditingTag && gameTag && (
+                    <TouchableOpacity
+                      style={styles.cancelButton}
+                      onPress={() => {
+                        setIsEditingTag(false);
+                        // Reset to saved value if canceling
+                        setGameTag(userGame?.game_tag || '');
+                      }}
+                    >
+                      <Text style={styles.cancelButtonText}>Cancel</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+                <Text style={styles.sectionDescription}>
+                  {tagDescription}
+                </Text>
+                
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={[styles.input, !isLinked && styles.inputDisabled]}
+                    value={gameTag}
+                    onChangeText={setGameTag}
+                    placeholder={tagPlaceholder}
+                    placeholderTextColor={colors.textSecondary}
+                    autoCapitalize="characters"
+                    editable={isLinked && !saving}
+                  />
+                </View>
+
+                {isLinked && (
+                  <TouchableOpacity
+                    style={[styles.button, styles.saveButton]}
+                    onPress={handleSaveTag}
+                    disabled={saving || !gameTag?.trim()}
+                  >
+                    {saving ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Text style={styles.buttonText}>Save Tag</Text>
+                    )}
+                  </TouchableOpacity>
+                )}
+
+                {!isLinked && (
+                  <Text style={styles.infoText}>
+                    Link this game to your profile to add your player tag.
+                  </Text>
+                )}
               </View>
             )}
 
@@ -517,6 +541,10 @@ const getStyles = (colors) => StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
+  statsHeaderButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
   refreshButton: {
     paddingVertical: 6,
     paddingHorizontal: 12,
@@ -524,9 +552,42 @@ const getStyles = (colors) => StyleSheet.create({
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
+    marginRight: 8,
   },
   refreshButtonText: {
     color: colors.primary,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  editButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    backgroundColor: colors.primary,
+    borderWidth: 1,
+    borderColor: colors.primary,
+  },
+  editButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  tagEditHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  cancelButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  cancelButtonText: {
+    color: colors.textSecondary,
     fontSize: 14,
     fontWeight: '600',
   },
