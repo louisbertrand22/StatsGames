@@ -277,12 +277,12 @@ export default function GameDetailScreen({ navigation, route }) {
                   </View>
                 </View>
 
-                {loadingPlayerData ? (
+                {loadingPlayerData && !playerData ? (
                   <View style={styles.statsLoadingContainer}>
                     <ActivityIndicator size="small" color={colors.primary} />
                     <Text style={styles.statsLoadingText}>Loading player data...</Text>
                   </View>
-                ) : playerDataError ? (
+                ) : playerDataError && !playerData ? (
                   <View style={styles.errorCard}>
                     <Text style={styles.errorTitle}>⚠️ Unable to Load Stats</Text>
                     <Text style={styles.errorText}>{playerDataError}</Text>
@@ -294,7 +294,7 @@ export default function GameDetailScreen({ navigation, route }) {
                     </TouchableOpacity>
                   </View>
                 ) : playerData ? (
-                  <View style={styles.statsCard}>
+                  <View style={[styles.statsCard, loadingPlayerData && styles.statsCardRefreshing]}>
                     <View style={styles.statsRow}>
                       <Text style={styles.statsLabel}>Name:</Text>
                       <Text style={styles.statsValue}>{playerData.name}</Text>
@@ -642,6 +642,9 @@ const getStyles = (colors) => StyleSheet.create({
     padding: 16,
     borderWidth: 1,
     borderColor: colors.border,
+  },
+  statsCardRefreshing: {
+    opacity: 0.6,
   },
   statsRow: {
     flexDirection: 'row',
