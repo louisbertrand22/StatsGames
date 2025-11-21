@@ -17,6 +17,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { fetchUserGames, updateGameTag, linkGameToUser, unlinkGameFromUser } from '../services/games';
+import { requiresPlayerTag, getTagLabel, getTagPlaceholder, getTagDescription } from '../config/games';
 
 export default function GameDetailScreen({ navigation, route }) {
   const { game } = route.params; // Passed from GamesScreen
@@ -109,7 +110,10 @@ export default function GameDetailScreen({ navigation, route }) {
     setSaving(false);
   };
 
-  const requiresTag = game.slug === 'clash-of-clans';
+  const requiresTag = requiresPlayerTag(game.slug);
+  const tagLabel = getTagLabel(game.slug);
+  const tagPlaceholder = getTagPlaceholder(game.slug);
+  const tagDescription = getTagDescription(game.slug);
 
   return (
     <View style={styles.container}>
@@ -171,13 +175,12 @@ export default function GameDetailScreen({ navigation, route }) {
               </View>
             </View>
 
-            {/* Game Tag Section (for Clash of Clans) */}
+            {/* Game Tag Section */}
             {requiresTag && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Player Tag</Text>
+                <Text style={styles.sectionTitle}>{tagLabel}</Text>
                 <Text style={styles.sectionDescription}>
-                  Enter your Clash of Clans player tag to load your profile stats.
-                  You can find your tag in-game by tapping your profile.
+                  {tagDescription}
                 </Text>
                 
                 <View style={styles.inputContainer}>
@@ -185,7 +188,7 @@ export default function GameDetailScreen({ navigation, route }) {
                     style={styles.input}
                     value={gameTag}
                     onChangeText={setGameTag}
-                    placeholder="#ABC123XYZ"
+                    placeholder={tagPlaceholder}
                     placeholderTextColor={colors.textSecondary}
                     autoCapitalize="characters"
                     editable={isLinked}
@@ -387,7 +390,7 @@ const getStyles = (colors) => StyleSheet.create({
     backgroundColor: colors.error,
   },
   saveButton: {
-    backgroundColor: colors.success || colors.primary,
+    backgroundColor: colors.success,
   },
   buttonText: {
     color: '#fff',
