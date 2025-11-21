@@ -12,7 +12,7 @@ database/
 
 ## Seeds
 
-The `seeds/` directory contains SQL scripts to populate the database with initial data.
+The `seeds/` directory contains SQL scripts to populate the database with initial data
 
 ### games.sql
 
