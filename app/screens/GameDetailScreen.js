@@ -19,7 +19,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { fetchUserGames, updateGameTag, linkGameToUser, unlinkGameFromUser } from '../services/games';
 import { requiresPlayerTag, getTagLabel, getTagPlaceholder, getTagDescription } from '../config/games';
 import { fetchPlayerData } from '../services/clashApi';
-import { upsertGameStats, deleteGameStats } from '../services/gameStats';
+import { upsertGameStats, deleteGameStats, fetchGameStats } from '../services/gameStats';
 
 export default function GameDetailScreen({ navigation, route }) {
   const { game } = route.params; // Passed from GamesScreen
@@ -70,6 +70,15 @@ export default function GameDetailScreen({ navigation, route }) {
       const tag = linkedGame.game_tag || '';
       setGameTag(tag);
       setOriginalGameTag(tag); // Store original for cancel functionality
+      
+      // Load cached stats from database for Clash of Clans
+      if (game.slug === 'clash-of-clans' && tag) {
+        const { data: cachedStats, error: statsError } = await fetchGameStats(user.id, game.id);
+        if (!statsError && cachedStats?.stats) {
+          console.log('Loaded cached stats from database');
+          setPlayerData(cachedStats.stats);
+        }
+      }
     }
 
     setLoading(false);
