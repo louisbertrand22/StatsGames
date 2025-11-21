@@ -12,10 +12,11 @@ A React Native mobile application built with Expo for displaying game statistics
 - ✅ User Profile Management
 - ✅ NFC Profile Sharing (Share profiles via NFC tags or links)
 - ✅ Game Management (Link games to your profile)
-  - Clash of Clans (with player tag registration)
+  - Clash of Clans (with player tag registration and stats)
   - Clash Royale
   - Rocket League
   - Fortnite
+- ✅ Game Statistics Storage (Persistent stats in database)
 - 🚧 Game Statistics Dashboard (Coming soon)
 
 ### Quick Start
@@ -36,6 +37,7 @@ For authentication setup, see [app/AUTH_README.md](app/AUTH_README.md).
 For NFC profile sharing, see [NFC_USER_GUIDE.md](NFC_USER_GUIDE.md) and [NFC_IMPLEMENTATION.md](NFC_IMPLEMENTATION.md).
 For games setup, see [GAMES_SETUP.md](GAMES_SETUP.md).
 For game tag registration (Clash of Clans player tags), see [GAME_TAG_FEATURE.md](GAME_TAG_FEATURE.md).
+For game statistics storage, see [GAME_STATS_STORAGE.md](GAME_STATS_STORAGE.md).
 
 ### CI/CD
 
