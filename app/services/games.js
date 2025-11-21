@@ -128,7 +128,7 @@ export const unlinkGameFromUser = async (userId, gameId) => {
 export const updateGameTag = async (userId, gameId, gameTag) => {
   try {
     // Validate that gameTag is provided and not empty
-    if (gameTag === null || gameTag === undefined || gameTag.trim() === '') {
+    if (!gameTag || gameTag.trim() === '') {
       return { 
         data: null, 
         error: { message: 'Game tag is required and cannot be empty' } 

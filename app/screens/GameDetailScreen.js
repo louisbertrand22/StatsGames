@@ -98,7 +98,8 @@ export default function GameDetailScreen({ navigation, route }) {
       }
     } else {
       // Link the game
-      const { data, error } = await linkGameToUser(user.id, game.id, gameTag || null);
+      const tagToSave = gameTag?.trim() || null;
+      const { data, error } = await linkGameToUser(user.id, game.id, tagToSave);
       if (error) {
         Alert.alert('Error', 'Failed to add game. Please try again.');
         console.error('Link error:', error);
@@ -201,7 +202,7 @@ export default function GameDetailScreen({ navigation, route }) {
                   <TouchableOpacity
                     style={[styles.button, styles.saveButton]}
                     onPress={handleSaveTag}
-                    disabled={saving || !gameTag.trim()}
+                    disabled={saving || !gameTag?.trim()}
                   >
                     {saving ? (
                       <ActivityIndicator size="small" color="#fff" />
